@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, dialog, ipcMain } from 'electron'
 import {
   createProtocol,
   /* installVueDevtools */
@@ -34,6 +34,31 @@ function createWindow () {
     win = null
   })
 }
+
+ipcMain.on('openDialogLocal', (event) => {
+  dialog.showOpenDialog(win, {
+    properties: ["openFile"], filters : [
+        {name : "log", extensions: ['log']}
+      ]
+  }).then(result =>{
+    event.reply('openDialogLocal', result.filePaths)
+  }).catch(err => {
+    console.log(err)
+  })
+})
+
+
+ipcMain.on('openDialogM2M', (event) => {
+  dialog.showOpenDialog(win, {
+    properties: ["openFile"], filters : [
+        {name : "csv", extensions: ['csv']}
+      ]
+  }).then(result =>{
+    event.reply('openDialogM2M', result.filePaths)
+  }).catch(err => {
+    console.log(err)
+  })
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
