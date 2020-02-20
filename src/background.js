@@ -11,6 +11,10 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
+var shell = require('shelljs')
+
+const logstash_dir = "/home/thomasm/Desktop"
+//const logstash_dir = "C:/Utilisateurs/A766646/Desktop/autoPairing"
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
@@ -35,15 +39,40 @@ function createWindow () {
   })
 }
 
+
 ipcMain.on('openDialogLocal', (event) => {
   dialog.showOpenDialog(win, {
     properties: ["openFile"], filters : [
         {name : "log", extensions: ['log']}
       ]
   }).then(result =>{
-    event.reply('openDialogLocal', result.filePaths)
+    if (result.filePaths == '') throw Error("Error : No file selected")
+
+    const file = result.filePaths[0]
+    const filename = file.match(/(\/[^/]*)$/g)
+    var count = 0
+    var res = ''
+
+    shell.cp(file, logstash_dir)
+
+    while (count < 10 && res == '')
+    {
+      res = shell.grep(logstash_dir+filename,logstash_dir+"/result.log")
+      count ++
+      if (res == '') setTimeout(() => console.log("File not found, retry in 1s, launched "+count+" time(s)"),1000)
+    }
+
+    if (count == 0) throw Error("Error : No result found")
+
+    if (res != '')
+    {
+      let reg = /log - (.*)/g
+      res = reg.exec(res)[1]
+    }
+    event.reply('openDialogLocal', res)
   }).catch(err => {
     console.log(err)
+    event.reply('openDialogLocal', err.message)
   })
 })
 

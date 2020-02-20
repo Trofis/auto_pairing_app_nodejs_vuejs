@@ -14,12 +14,12 @@
             <p class="mt-1">M2M servers : </p>
           </v-col>
           <v-col class="d-flex justify-end">
-            <v-btn rounded color="primary" dark @click="openDialogM2M"> Select csv</v-btn>
+            <v-btn rounded color="primary" disabled  @click="openDialogM2M"> Select csv</v-btn>
           </v-col>
         </v-row>
       </div>
       <v-bottom-sheet v-model="sheet">
-        <v-sheet class="text-center" height="200px">
+        <v-sheet v-if="message != ''" class="text-center" height="200px" >
             <v-btn
                 class="mt-6"
                 flat
@@ -29,6 +29,14 @@
                 Close
             </v-btn>
             <div class="py-3">{{message}}</div>
+        </v-sheet>
+        <v-sheet v-else class="text-center" height="100px" >
+            <v-progress-circular
+              indeterminate
+              color = "primary"
+              class="mt-2"
+            >
+            </v-progress-circular>
         </v-sheet>
     </v-bottom-sheet>
     </div>
@@ -47,11 +55,12 @@ export default {
   }),
   methods: {
     openDialogLocal(){
+      this.message = ''
       ipcRenderer.send("openDialogLocal")
+      this.sheet = true
       ipcRenderer.on("openDialogLocal", (event,arg) =>{
         console.log(arg)
-        this.sheet = true
-        arg == '' ? this.message = "No file selected" : this.message = "The following file has been selected : "+arg
+        this.message = arg
       })
     },
     openDialogM2M(){
