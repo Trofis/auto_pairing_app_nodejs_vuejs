@@ -3,10 +3,18 @@
       <div class="flex-column">
         <v-row>
           <v-col class="fluid" md="auto"> 
-            <p class="mt-1">Local : </p>
+            <p class="mt-1">Local - log file: </p>
           </v-col>
           <v-col class="d-flex justify-end">
             <v-btn rounded color="primary" vdark @click="openDialogLocal"> Select log</v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col class="fluid" md="auto"> 
+            <p class="mt-1">Local - zip files: </p>
+          </v-col>
+          <v-col class="d-flex justify-end">
+            <v-btn rounded color="primary" @click="openDialogLocalZip"> Select directory</v-btn>
           </v-col>
         </v-row>
         <v-row>
@@ -59,6 +67,15 @@ export default {
       ipcRenderer.send("openDialogLocal")
       this.sheet = true
       ipcRenderer.on("openDialogLocal", (event,arg) =>{
+        console.log(arg)
+        this.message = arg
+      })
+    },
+    openDialogLocalZip(){
+      this.message = ''
+      ipcRenderer.send("openDialogLocalZip")
+      this.sheet = true
+      ipcRenderer.on("openDialogLocalZip", (event,arg) =>{
         console.log(arg)
         this.message = arg
       })
