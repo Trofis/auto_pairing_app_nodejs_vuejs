@@ -5,11 +5,15 @@ import {
   createProtocol,
   /* installVueDevtools */
 } from 'vue-cli-plugin-electron-builder/lib'
+//import { resolve } from 'dns'
+const spawn = require('child_process').spawnSync
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const shell = require('shelljs')
-const shellExec = require('shell-exec')
-const {Worker} = require('worker_threads')
-const { exec } = require('child_process')
+//const shell = require('shelljs')
+const os = require('os')
+const WorkerPool = require('./model')
+const execSync = require('child_process').execSync
+const exec = require('child_process').exec
+//const shellExec = require('shell-exec')
 
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -17,22 +21,26 @@ const { exec } = require('child_process')
 let win
 
 
-var logstash_dir;
-var logsDir;
+let logstash_dir;
+let logsDir;
 
+//const pool = new WorkerPool(os.cpus().length)
+const pool = new WorkerPool(os.cpus().length/2)
 
 //const logstash_dir = "C:/Utilisateurs/A766646/Desktop/autoPairing"
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+
+//------------------------------------------------//
+//------------------ Functions -------------------//
+//------------------------------------------------//
 
 function createWindow () {
   // Create the browser window.
   win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
     nodeIntegration: true
   } })
-  console.log('Seeking for logstash')
-  logstashSynchronize().then(console.log)
-  console.log('logstash found')
+  
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
@@ -43,11 +51,12 @@ function createWindow () {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
-
+  
+  //Set logs directory depends on os
   if (process.platform === "win32" || process.platform === "win64")
-    logsDir = "C:/users"
+    logsDir = "C:/users/logs_modem_files"
   else 
-    logsDir = "/var"
+    logsDir = "/var/logs_modem_files"
 
   win.on('closed', () => {
     win = null
@@ -55,19 +64,96 @@ function createWindow () {
 
 }
 
-//LOCAL LOG FILE EVENT
-ipcMain.on('openDialogLocal', (event) => {
+ 
+function _useWorkerTreatFiles(files, directory, event){
+  // Init lets
+  let result = []
+  let msg = ""
+  let i = 0
+  // Launch worker for each file
+  files.forEach((file) => {
+   
+    pool.runTask({file, logsDir, logstash_dir}, (err, res) => {
+      console.log("Run thread for : "+file)
+      const item = [file, res]
+      console.log("Item pushed : ",file, res)
+      result.push(item)
+      // If all files treated then write down all the results in result.log
+      if (++i === files.length)
+      {
+        // Close pool workers
+        pool.close()
+        console.log("pool closed")
+        // Init csv's lets for writing
+        const createCsvWrite = require('csv-writer').createArrayCsvWriter
+        const csvWriter = createCsvWrite({
+          path: directory+'/result.csv',
+          header : ["FILE", "RESULT"]
+        })
+        
+        // If no result then probably something goes wrong with logstash
+        // If not then write results in a csv
+        if (result.length == 0)
+        {
+          msg = "No results found - check out if your logstash actually working"
+        } 
+        else{
+          msg = "Results in : "+directory
+      
+          csvWriter.writeRecords(result).then(() => {
+            console.log('CSV Writer : done')
+            event.reply('openDialogLocalZip',msg)
+
+          }).catch(err => {
+            console.log(err)
+            event.reply('openDialogLocalZip',err)
+            
+          })
+        } 
+      }
+    })
+  })
+
+
+}
+
+async function logstashSynchronize(){
   try
   {
-    logstash_dir = shell.find('~').filter(function(folder) { return folder.match(/autoPairing$/); });
-    if (logstash_dir == "") throw new Error("Application not found")
+    //logstash_dir = shell.find('~').filter(function(folder) { return folder.match(/autoPairing$/); });
+    logstash_dir = execSync("find ~ -name 'autoPairing'", (err, stdout, stderr) => {
+      if (err)
+        console.log(err)
+      console.log("stdout ",stdout)
+      console.log("stdout ",stderr)
+    }).toString('utf-8').replace(/\n/g, '')
+    console.log("logstash_dir ",logstash_dir)
+    if (logstash_dir == "") throw new Error("Error : logstash not found")
   }catch(err)
   {
-    event.reply('openDialogLocal', err.message)
-    return;
+    console.log(err)
   }
+}
 
+//------------------------------------------------//
+//----------------- CONTROLLERS ------------------//
+//------------------------------------------------//
 
+ipcMain.on('lookingForLogstash', (event) => {
+  console.log('Seeking for logstash')
+  try{
+
+    logstashSynchronize().then(console.log)
+    event.reply('lookingForLogstash', 'Logstash found')
+  }catch(err){
+    event.reply('lookingForLogstash', 'Logstash not found')
+  }
+  console.log('logstash found')
+})
+
+//LOCAL LOG FILE EVENT
+ipcMain.on('openDialogLocal', (event) => {
+  //Finding autoPairing app
   dialog.showOpenDialog(win, {
     properties: ["openFile"], filters : [
         {name : "log", extensions: ['log']}
@@ -77,18 +163,41 @@ ipcMain.on('openDialogLocal', (event) => {
 
     const file = result.filePaths[0]
     const filename = file.match(/(\/[^/]*)$/g)
-    logsDir +="/logs_modem_files"
-    var count = 0
-    var res = ''
+    let count = 0
+    let res = ''
 
-    shell.mkdir(logsDir)
-    shell.cp(file, logsDir)
+    exec("mkdir "+logsDir)
+    exec('cp '+file+' '+logsDir)
 
+    //Old version using shelljs (too slow)
+    //shell.mkdir(logsDir)
+    //shell.cp(file, logsDir)
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms))
     while (count < 10 && (res == '' || res == '\n'))
     {
-      res = shell.grep(logsDir+filename,logstash_dir+"/result.log")
+      const cmd = "grep '"+logsDir+filename+"' "+logstash_dir+"/result.log"
+      console.log("cmd ",cmd)
+      //if (!found) setTimeout(() => console.log("retry in 1s, launched "+count+" time(s)"),1000)
+      sleep(1000).then(() => {
+        
+        try{
+          res = execSync(cmd, (err, stdout, stderr) => {
+            if (err)
+              console.log(err)
+            console.log("stdout ",stdout)
+            console.log("stdout ",stderr)
+          }).toString('utf-8')
+          console.log("res ",res)
+        }catch(err)
+        {
+          console.log("File not found")
+        }
+        
+        //res = shell.grep(logsDir+filename,logstash_dir+"/result.log")
+        
+      })
       count ++
-      if (res == '\n' || res == '') setTimeout(() => console.log("File not found, retry in 1s, launched "+count+" time(s)"),20)
+      console.log(count)
     }
 
     if (count == 10) throw Error("Error : No result found")
@@ -105,69 +214,10 @@ ipcMain.on('openDialogLocal', (event) => {
   })
 })
 
-function _useWorkerTreatFiles(files){
-  var result = {}
-  files.forEach((file) => {
-    return new Promise((resolve, reject) => {
-      const worker = new Worker(__filename, {
-        workerData:[file], argv : [result]
-      });
-      worker.on('online', () => {
-        const filename = file.match(/(\/[^/]*)$/g)
-        var count = 0
-        var res = ''
 
-        while (count < 10 && (res == '' || res == '\n'))
-        {
-          res = shell.grep(logsDir+filename,logstash_dir+"/result.log")
-          count ++
-          if (res == '\n' || res == '') setTimeout(() => console.log("File not found, retry in 1s, launched "+count+" time(s)"),20)
-        }
-
-        if (count == 10) throw Error("Error : No result found")
-        
-        if (res != '')
-        {
-          let reg = /log - (.*)/g
-          res = reg.exec(res)[1]
-        }
-        result.file = res
-      })
-      worker.on('message', messageFromWorker => {
-        console.log(messageFromWorker)
-        return resolve
-      })
-      worker.on('error', reject)
-      worker.on('exit', code => {
-        if (code !== 0){
-          reject(new Error('Worker stopped with exit code ${code}'))
-        }
-      })
-    })
-
-
-  })
-}
-
-async function logstashSynchronize(){
-  try
-  {
-    logstash_dir = 
-    logstash_dir = shell.find('~').filter(function(folder) { return folder.match(/autoPairing$/); });
-    if (logstash_dir == "") throw new Error("Error : logstash not found")
-  }catch(err)
-  {
-    console.log(err)
-  }
-}
 
 //LOCAL ZIP FILES EVENT
 ipcMain.on('openDialogLocalZip', (event) => {
-  //Finding where is autoPairing
-  if (logstash_dir == '')
-    logstashSynchronize()
-    if (logstash_dir == '') {event.reply('openDialogLocalZip', 'Error : logstash not found'); return}
-
   //Select zip logs' directory
   dialog.showOpenDialog(win, {
     properties: ["openDirectory"]
@@ -175,10 +225,21 @@ ipcMain.on('openDialogLocalZip', (event) => {
     if (result.filePaths == '') throw Error("Error : No directory selected")
 
     const directory = result.filePaths[0]
-    const files = shell.find(directory).filter(function(folder) { return folder.match(/.*.tar.gz/g); });
-    console.log('Directory : '+directory)
-    console.log('Files : '+files)
-    console.log('Logstash dir : '+logstash_dir)
+    let files = []
+    //let findFiles = spawn('find', [directory, '*.tar.gz'], ['-name'])
+    //files = findFiles.stdout.toString()
+    files.push(execSync("find "+directory+" -name '*.tar.gz'", (err, stdout, stderr) => {
+      if (err)
+        console.log(err)
+      files += stdout
+      console.log("stdout ",stdout)
+      console.log("stdout ",stderr)
+    }).toString('utf-8'))
+    console.log("files[0] : ",files[0].toString())
+    files= files[0].toString().split('\n').splice(files.lastIndex, 1)
+    console.log("files : ",files)
+    //const files = shell.find(directory).filter(function(folder) { return folder.match(/.*.tar.gz/g); });
+
     //Copy code to logstah logs' directory
     if (process.platform === "win32" || process.platform === "win64")
     {
@@ -206,60 +267,15 @@ ipcMain.on('openDialogLocalZip', (event) => {
       })
       //shellExec(logstash_dir+"/bash_code/code_linux", directory).then(console.log).catch(console.log)
     }
-
     //Asynchronously dispatch the work between several thread in order to treat and check result for each log
-    var workerResult = []
-    workerResult = _useWorkerTreatFiles(files)
-    console.log(workerResult)
+    _useWorkerTreatFiles(files, directory, event)
 
-    //Write result in csv file
-    const createCsvWrite = require('csv-writer').createArrayCsvWriter
-    shell.touch('~/Desktop/result.csv')
-    const csvWriter = createCsvWrite({
-      path: directory+'/result.csv',
-      header : ["FILE", "RESULT"]
-    })
-    var records = [] 
-    let msg = ""
-    console.log(workerResult)
-    if (workerResult.length == 0)
-    {
-      records.push(['',''])
-      console.log(records)
-      msg = "No results found - check out if your logstash actually working"
-    } 
-    else{
-      msg = "Results in : "+directory
-      console.log(records)
-  
-      csvWriter.writeRecords(records).then(() => {
-        console.log('CSV Writer : done')
-      }).catch(err => {
-        console.log(err)
-        throw new Error(err)
-      })
-    } 
-    
-    
-    event.reply('openDialogLocalZip', msg)
   }).catch(err => {
     console.log(err)
     event.reply('openDialogLocalZip', err.message)
   })
 })
 
-//M2M EVENT
-ipcMain.on('openDialogM2M', (event) => {
-  dialog.showOpenDialog(win, {
-    properties: ["openFile"], filters : [
-        {name : "csv", extensions: ['csv']}
-      ]
-  }).then(result =>{
-    event.reply('openDialogM2M', result.filePaths)
-  }).catch(err => {
-    console.log(err)
-  })
-})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
