@@ -41,7 +41,14 @@
                   </v-skeleton-loader>
 
                 </template>
-              
+                <v-skeleton-loader
+                  :loading='result != ""'
+                  class='d-flex align-center justify-center'
+                  height="100%"
+                  type="text"
+                >
+
+                </v-skeleton-loader>
 
             </v-data-table>
         </v-sheet>
@@ -76,7 +83,7 @@
 </template>
 
 <script>
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, remote} = require('electron')
 export default {
   name: 'Home',
   data: () => ({
@@ -91,8 +98,10 @@ export default {
     size: 0,
     loading:[],
     actualSize:0,
+    actualUpdateSize:0,
     valueCircular:0,
     files: [],
+    result:'',
     overlay:false,
   }),
   watch:{
@@ -104,6 +113,17 @@ export default {
         this.sheet = true
         this.overlay=false
       }
+    },
+    actualUpdateSize (val)  {
+      console.log("update")
+      if (val == this.size)
+      {
+        this.result = 'A csv has been created in the directory'
+      }
+    },
+    sheet(val) {
+      if (this.message == 'Logstash not found, the app will close, please make sure you have the autoPairing folder in your computer' && !val)
+        remote.getCurrentWindow().close()
     }
   },
   methods: {
@@ -131,26 +151,43 @@ export default {
     this.color = "success"
     ipcRenderer.once("lookingForLogstash", (event,arg) =>{
       console.log(arg)
-      this.message = arg
+      if (arg == 'Logstash not found')
+        this.message = 'Logstash not found, the app will close, please make sure you have the autoPairing folder in your computer'
+      else
+        this.message = arg
       this.messageload = ''
       
     })
-    console.log("azdk")
     ipcRenderer.on("syncFiles", (event,arg) =>{
       console.log(arg)
       this.overlay=true
       if (typeof arg == "number" )
-        this.size = arg
+        if (arg == 0)
+        {
+          this.message = 'No zip files found'
+          this.sheet = true
+          this.overlay=false
+        }
+        else
+          this.size = arg
       else
       {
-        this.files.push({ file : arg, result: ''})
-        this.loading.push(true)
-        this.message = 'files'
-        setTimeout(() => {
-          console.log("increment actual size")
-          this.actualSize++
-          this.valueCircular = this.actualSize/this.size*100
-        }, 500)
+        if (arg == 'Error : No directory selected'){
+          console.log('error')
+          this.overlay=false
+          this.message = 'Please you must select a directory'
+          this.sheet = true
+        }else{
+          this.files.push({ file : arg, result: ''})
+          this.loading.push(true)
+          this.message = 'files'
+          setTimeout(() => {
+            console.log("increment actual size")
+            this.actualSize++
+            this.valueCircular = this.actualSize/this.size*100
+          }, 500)
+        }
+        
       }
     })
     ipcRenderer.on('syncFilesResult', (event, arg) => {
@@ -158,6 +195,7 @@ export default {
       this.files.forEach((elem, i) => { 
         if (elem['file'] == arg[0]) 
         {
+          this.actualUpdateSize++
           elem['result']= arg[1]
           console.log(this.loading[i])
           this.loading[i] = false
@@ -167,7 +205,10 @@ export default {
 
     ipcRenderer.once("openDialogLocal", (event,arg) =>{
       console.log(arg)
-      this.message = arg
+      if (arg == 'Error : No file selected')
+        this.message = 'Please you must select a log file'
+      else
+        this.message = arg
     })
   
   }

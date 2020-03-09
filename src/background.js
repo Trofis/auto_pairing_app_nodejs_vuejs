@@ -1,10 +1,11 @@
-'use strict'
+const app = require('electron').app
+const protocol = require('electron').protocol
+const BrowserWindow = require('electron').BrowserWindow
+const dialog = require('electron').dialog
+const ipcMain = require('electron').ipcMain
 
-import { app, protocol, BrowserWindow, dialog, ipcMain } from 'electron'
-import {
-  createProtocol,
-  /* installVueDevtools */
-} from 'vue-cli-plugin-electron-builder/lib'
+const createProtocol = require('vue-cli-plugin-electron-builder/lib')
+
 //import { resolve } from 'dns'
 //const spawn = require('child_process').spawnSync
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -74,12 +75,14 @@ function _useWorkerTreatFiles(files, directory, event){
   let msg = ""
   let i = 0
   console.log("Use worker")
-  const pool = new WorkerPool(os.cpus().length/2)
+  const pool = new WorkerPool(os.cpus().length)
+  console.log(pool)
 
   // Launch worker for each file
   files.forEach((file) => {
     console.log(file)
     pool.runTask({file, logsDir, logstash_dir}, (err, res) => {
+      console.log("Run thread for : "+file)
       if (err)
       {
         console.log(err)
@@ -87,7 +90,6 @@ function _useWorkerTreatFiles(files, directory, event){
         event.reply('syncFilesResult', itemError)
         return;
       }
-      console.log("Run thread for : "+file)
       const item = [file, res]
       console.log("Item pushed : ",file, res)
       event.reply('syncFilesResult', item)
@@ -100,8 +102,9 @@ function _useWorkerTreatFiles(files, directory, event){
         console.log("pool closed")
         // Init csv's lets for writing
         const createCsvWrite = require('csv-writer').createArrayCsvWriter
+        const timestamp = new Date().getTime().toString()
         const csvWriter = createCsvWrite({
-          path: directory+'/result.csv',
+          path: directory+'/'+timestamp+'result.csv',
           header : ["FILE", "RESULT"]
         })
         
@@ -129,7 +132,7 @@ function _useWorkerTreatFiles(files, directory, event){
 
 }
 
-async function logstashSynchronize(){
+function logstashSynchronize(){
   try
   {
     //logstash_dir = shell.find('~').filter(function(folder) { return folder.match(/autoPairing$/); });
@@ -156,11 +159,12 @@ async function logstashSynchronize(){
         console.log(err)
       console.log("stdout ",stdout)
       console.log("stdout ",stderr)
-    }).toString('utf-8').replace(/\n/g, '').length > 0
+    }).toString('utf-8').replace(/\n/g, '').match(/grep/g).length > 2
     console.log(isExecuted)
     codeDir = logstash_dir+"/bash_code/"+codeDirName
     if (!isExecuted){
-      logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f ", logstash_dir+"/config/"+configName, " -w 1"])
+      const cmdLogst = logstash_dir+"/logstash-7.6.0/bin/logstash -f "+logstash_dir+"/config/"+configName+" -w 1"
+      logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", logstash_dir+"/config/"+configName, "-w", 1])
       logstash_process.on('close', (code,signal) => {
         console.log('child killed ',code, signal)
       })
@@ -171,7 +175,8 @@ async function logstashSynchronize(){
 
   }catch(err)
   {
-    console.log(err)
+    console.log("logstash synchronize : ",err)
+    throw Error(err)
   }
 }
 
@@ -179,17 +184,19 @@ async function logstashSynchronize(){
 //----------------- CONTROLLERS ------------------//
 //------------------------------------------------//
 
+
 //Looking for logstash on your computer
 ipcMain.on('lookingForLogstash', (event) => {
   console.log('Seeking for logstash')
   try{
 
-    logstashSynchronize().then(console.log)
+    logstashSynchronize()
     event.reply('lookingForLogstash', 'Logstash found')
   }catch(err){
     event.reply('lookingForLogstash', 'Logstash not found')
+    console.log('logstash not found')
   }
-  console.log('logstash found')
+  
 })
 
 //Zip files part
@@ -201,16 +208,20 @@ ipcMain.on('syncFiles', (event) => {
     properties: ["openDirectory"]
   })
   try{
-    if (result.filePaths == '') throw Error("Error : No directory selected")
+    console.log(result)
+    console.log(result == null)
 
-  }catch(err) {throw Error("Error : No directory selected")}
+    if (result == null || result.filePaths == '') throw Error("Error : No directory selected")
 
+  }catch(err) { event.reply('syncFiles', 'Error : No directory selected'), console.log(err); return;}
+
+  console.log(result)
   directory = result[0]
 
   let files = []
   //let findFiles = spawn('find', [directory, '*.tar.gz'], ['-name'])
   //files = findFiles.stdout.toString()
-  files.push(execSync("find "+directory+" -name '*.tar.gz'", (err, stdout, stderr) => {
+  files.push(execSync("find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'", (err, stdout, stderr) => {
     if (err)
       console.log(err)
     files += stdout
@@ -245,7 +256,11 @@ ipcMain.on('openDialogLocal', (event) => {
   }).then(result =>{
     if (result.filePaths == '') throw Error("Error : No file selected")
 
-    const file = result.filePaths[0]
+    try{
+      const file = result.filePaths[0]
+    }catch(err){
+      throw Error("Error : No file selected")
+    }
     const filename = file.match(/(\/[^/]*)$/g)
     let count = 0
     let res = ''
@@ -299,56 +314,20 @@ ipcMain.on('openDialogLocal', (event) => {
 })
 
 
-
-//LOCAL ZIP FILES EVENT
-/*
-ipcMain.on('openDialogLocalZip', (event) => {
-  //Select zip logs' directory
-  
-    //const files = shell.find(directory).filter(function(folder) { return folder.match(/.*.tar.gz/g); });
-
-    //Copy code to logstah logs' directory
-    if (process.platform === "win32" || process.platform === "win64")
-    {
-      exec(logstash_dir+"/bash_code/code_windows "+directory, (err, stdout, stderr) => {
-        if (err)
-          console.log(err)
-        else{
-          console.log('stdout : '+stdout)
-          console.log('stderr : '+stderr)
-
-        }
-      })
-      //shellExec(logstash_dir+"/bash_code/code_windows", directory).then(console.log).catch(console.log)
-    }
-    else
-    {
-      exec(logstash_dir+"/bash_code/code_linux "+directory, (err, stdout, stderr) => {
-        if (err)
-          console.log(err)
-        else{
-          console.log('stdout : '+stdout)
-          console.log('stderr : '+stderr)
-
-        }
-      })
-      //shellExec(logstash_dir+"/bash_code/code_linux", directory).then(console.log).catch(console.log)
-    }
-    //Asynchronously dispatch the work between several thread in order to treat and check result for each log
-    _useWorkerTreatFiles(files, directory, event)
-
-
-})*/
-
-
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit()
-    if (!isExecuted)
-      logstash_process.kill('SIGKILL')
+    try{
+      console.log('Window closed')
+      if (!isExecuted)
+        logstash_process.kill('SIGKILL')
+      
+    }catch(err){
+      console.log("Logstash is not running OK")
+    }
   }
 })
 
