@@ -3,11 +3,11 @@ const { execSync } = require('child_process')
 
 const ResStatusEmun = Object.freeze({"In progress": 1, "Done": 2})
 var res 
+
 parentPort.on('message', (task) => {
     const filename = task.file.match(/(\/[^/]*)$/g)
     let resStatus
     getResult(filename,task.logsDir, task.logstash_dir, task.file)
-    console.log("res : ",res)
     if (res == null || res == ''){
         process = setInterval(() => {
             resStatus = checkStatus(filename, task.logsDir, task.logstash_dir)
@@ -25,7 +25,7 @@ parentPort.on('message', (task) => {
 })
 
 function checkStatus(filename,logsDir, logstash_dir){
-    const cmd2 = "grep "+logsDir+filename+" "+logstash_dir+"/status.log | grep 'Done'"
+    const cmd2 = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
     let res2
     try{
         res2 = execSync(cmd2, (err, stdout, stderr) => {
@@ -47,7 +47,7 @@ function checkStatus(filename,logsDir, logstash_dir){
 
 function getResult(filename,logsDir, logstash_dir, file){
     //Looking for the file's result 
-    const cmd = "grep "+logsDir+filename+" "+logstash_dir+"/result.log "
+    const cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     try{
         res = execSync(cmd, (err, stdout, stderr) => {
             if (err)
@@ -59,21 +59,19 @@ function getResult(filename,logsDir, logstash_dir, file){
         console.log(err)
     }
     
-    console.log('result status for '+file+" : "+res)
     
     //If count equals to 10 then no result found
     //if (count == 10) throw Error("Error : No result found")
     
     //If result contains something then extract the file's result
-    if (res != null && res != '')
-    {
+    console.log("res ", res)
+    try{
         let reg = /log - (.*)/g
         res = reg.exec(res)[1]
         parentPort.postMessage(res)
-
-
-    }else{
+    }catch(err){
         console.log("1st check : not found in result log")
+        res = null
     }
 
 }   
