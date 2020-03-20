@@ -159,13 +159,15 @@ function logstashSynchronize(){
 
       codeDirName = "code_windows"
       configName = "logstash-config-windows.conf"
+      console.log(__filename)
+      console.log(__dirname)
 
       var options = {
         mode:'text',
-        pythonPath:'C:/Utilisateurs/'+user[0]+'/Downloads/python/python.exe',
+        pythonPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src\\python\\bin\\python',
         pythonOptions:['-u'],
-        scriptPath:'C:/Utilisateurs/'+user[0]+'/Documents/auto-pairing-app-total_async_call_Vue_Electron/src/',
-        args: ['2' ,'C:/Utilisateurs/'+user[0]]
+        scriptPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src',
+        args: ['2' ,'C:\\Utilisateurs\\'+user[0]]
       }
 
       PythonShell.run('script_windows.py', options, (err, results) => {
@@ -181,9 +183,9 @@ function logstashSynchronize(){
 
       var options = {
         mode:'text',
-        pythonPath:'C:/Utilisateurs/'+user[0]+'/Downloads/python/python.exe',
+        pythonPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src\\python\\bin\\python',
         pythonOptions:['-u'],
-        scriptPath:'C:/Utilisateurs/'+user[0]+'/Documents/auto-pairing-app-total_async_call_Vue_Electron/src/',
+        scriptPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src',
         args: ['8' ,'logstash']
       }
       PythonShell.run('script_windows.py', options, (err, results) => {
