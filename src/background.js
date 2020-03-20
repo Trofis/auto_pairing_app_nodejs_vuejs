@@ -7,12 +7,16 @@ const ipcMain = require('electron').ipcMain
 //const createProtocol = require('vue-cli-plugin-electron-builder/lib')
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { get } from 'http'
+import {PythonShell} from 'python-shell'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const os = require('os')
 const WorkerPool = require('./model')
 const execSync = require('child_process').execSync
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
+const shell = require('shelljs')
+
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -55,7 +59,7 @@ function createWindow () {
   
   //Set logs directory depends on os
   if (process.platform === "win32" || process.platform === "win64")
-    logsDir = "C:/users/logs_modem_files"
+    logsDir = "C:/logs_modem_files"
   else 
     logsDir = "/var/logs_modem_files"
 
@@ -137,71 +141,117 @@ function _useWorkerTreatFiles(files, directory, event){
 }
 
 function logstashSynchronize(){
+  let isExecutedCmd
   try
   {
+    exec("mkdir "+logsDir)
+    exec("mkdir "+logsDir+"/all")
+
+    if (process.platform === "win32" || process.platform === "win64")
+    {
+      let user = execSync("quser", (err, stdout, stderr) => {
+        if (err)
+          console.log(err)
+        console.log("stdout ",stdout) 
+        console.log("stdout ",stderr)
+      }).toString('utf-8').match(/(a[0-9]+)/g)
+      console.log(user)
+
+      codeDirName = "code_windows"
+      configName = "logstash-config-windows.conf"
+
+      var options = {
+        mode:'text',
+        pythonPath:'C:/Utilisateurs/'+user[0]+'/Downloads/python/python.exe',
+        pythonOptions:['-u'],
+        scriptPath:'C:/Utilisateurs/'+user[0]+'/Documents/auto-pairing-app-total_async_call_Vue_Electron/src/',
+        args: ['2' ,'C:/Utilisateurs/'+user[0]]
+      }
+
+      PythonShell.run('script_windows.py', options, (err, results) => {
+        if (err) throw err
+        console.log('results ', results)
+        logstash_dir = results
+        codeDir = logstash_dir+"/bash_code/"+codeDirName
+
+      })
+      //logstash_dir = shell.find('C:/Utilisateurs/'+user[0]+'/Desktop').filter(function(file) { return file.match(/autoPairing$/); });
+
+
+
+      var options = {
+        mode:'text',
+        pythonPath:'C:/Utilisateurs/'+user[0]+'/Downloads/python/python.exe',
+        pythonOptions:['-u'],
+        scriptPath:'C:/Utilisateurs/'+user[0]+'/Documents/auto-pairing-app-total_async_call_Vue_Electron/src/',
+        args: ['8' ,'logstash']
+      }
+      PythonShell.run('script_windows.py', options, (err, results) => {
+        if (err) throw err
+        console.log('results ', results)
+        logstash_dir = results
+
+      })
+    }
     //Looking for autoPairing app 
-    logstash_dir = execSync("find ~ -name 'autoPairing'", (err, stdout, stderr) => {
-      if (err)
+    else{
+      logstash_dir = execSync("find ~ -name 'autoPairing'", (err, stdout, stderr) => {
+        if (err)
+          console.log(err)
+        console.log("stdout ",stdout)
+        console.log("stdout ",stderr)
+      }).toString('utf-8').replace(/\n/g, '')
+      isExecutedCmd = 'ps -aux | grep logstash'
+
+      codeDirName = "code_linux"
+      configName = "logstash-config-linux.conf"
+      codeDir = logstash_dir+"/bash_code/"+codeDirName
+
+      try {
+        isExecuted = execSync(isExecutedCmd , (err, stdout, stderr) => {
+        if (err)
         console.log(err)
-      console.log("stdout ",stdout)
-      console.log("stdout ",stderr)
-    }).toString('utf-8').replace(/\n/g, '')
+          console.log("stdout ",stdout)
+          console.log("stdout ",stderr)
+        }).toString('utf-8').replace(/\n/g, '').match(/grep/g).length > 2
+      }
+      catch(err){console.log(err); isExecuted = false}
+    
+    
+      //Launch Logstash is not processing
+      if (!isExecuted){
+        if (process.platform === "win32" || process.platform === "win64")
+          logstash_process = spawn(logstash_dir+"/logstash-7.6.0/bin/logstash", ["-f", logstash_dir+"/config/"+configName, "-w", 1])
+        else
+          logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", logstash_dir+"/config/"+configName, "-w", 1])
+        logstash_process.on('close', (code,signal) => {
+          console.log('child killed ',code, signal)
+        })
+        logstash_process.stdout.on('data', (data) => {
+          console.log(data.toString())
+        })
+      }
+    }
 
     if (logstash_dir == "") throw new Error("logstash not found")
-  }catch(err)
+
+  }
+  catch(err)
   {
     console.log("logstashSynchronize : ",err)
     throw Error(err)
   }
-
   //Init LogsDir
-  exec("mkdir "+logsDir)
-  exec("mkdir "+logsDir+"/all")
+  
 
   //Setting codeDirName & configName
-  if (process.platform === "win32" || process.platform === "win64")
-  {
-    codeDirName = "code_windows"
-    configName = "logstash-config-windows.conf"
-  }
-  else{
-    codeDirName = "code_linux"
-    configName = "logstash-config-linux.conf"
-  } 
-  codeDir = logstash_dir+"/bash_code/"+codeDirName
 
   //Checking if logstash is running 
-  isExecuted = execSync("ps -aux | grep "+logstash_dir+"/logstash-7.6.0/bin/logstash", (err, stdout, stderr) => {
-    if (err)
-      console.log(err)
-    console.log("stdout ",stdout)
-    console.log("stdout ",stderr)
-  }).toString('utf-8').replace(/\n/g, '').match(/grep/g).length > 2
-
-
-  //Launch Logstash is not processing
-  if (!isExecuted){
-    /*console.log("export logstash_dir='"+logstash_dir+"/'")
-    execSync("echo 'export logstash_dir="+logstash_dir+"/' >> ~/.bashrc", (err, stdout, stderr) => {
-      if (err)
-        console.log(err)
-      console.log("stdout ",stdout)
-      console.log("stdout ",stderr)
-    })*/
-
-    const cmdLogst = logstash_dir+"/logstash-7.6.0/bin/logstash -f "+logstash_dir+"/config/"+configName+" -w 1"
-
-    logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", logstash_dir+"/config/"+configName, "-w", 1])
-    logstash_process.on('close', (code,signal) => {
-      console.log('child killed ',code, signal)
-    })
-    logstash_process.stdout.on('data', (data) => {
-      console.log(data.toString())
-    })
-  }
+  
 }
 
 //------------------------------------------------//
+
 //----------------- CONTROLLERS ------------------//
 //------------------------------------------------//
 
@@ -245,13 +295,27 @@ ipcMain.on('syncFiles', (event) => {
     //Set the directory selected
     directory = resultDialog[0]
     try{
-      files.push(execSync("find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'", (err, stdout, stderr) => {
-        if (err)
-          console.log(err)
-        files += stdout
-        console.log("stdout ",stdout)
-        console.log("stdout ",stderr)
-      }).toString('utf-8'))
+      if(process.platform === "win32" || process.platform === "win64")
+      {
+        const cmd = "python3 script_windows.py 3 "+directory
+        execSync(cmd, (err, stdout, stderr) => {
+          if (err)
+            console.log(err)
+          console.log("stdout ",stdout)
+          console.log("stdout ",stderr)
+        })
+       continueProcess = false
+
+      }
+      else{
+        files.push(execSync("find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'", (err, stdout, stderr) => {
+          if (err)
+            console.log(err)
+          files += stdout
+          console.log("stdout ",stdout)
+          console.log("stdout ",stderr)
+        }).toString('utf-8'))
+      } 
     }catch(err){
       continueProcess = false
       event.reply('syncFiles', 'No zip files found')
@@ -267,7 +331,7 @@ ipcMain.on('syncFiles', (event) => {
       files.forEach((elem) => { event.reply('syncFiles', elem)})
     
       //Exec code to extract log files from zip & send them to the logsDir
-      execSync("sh "+codeDir+" "+directory)
+      execSync(codeDir+" "+directory)
     
       //Starting treating files
       _useWorkerTreatFiles(files, directory, event)

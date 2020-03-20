@@ -25,7 +25,11 @@ parentPort.on('message', (task) => {
 })
 
 function checkStatus(filename,logsDir, logstash_dir){
-    const cmd2 = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
+    let cmd2
+    if (process.platform === "win32" || process.platform === "win64")
+        cmd2 = "findstr '"+logsDir+filename+"' "+logsDir+"/status.log | findstr 'Done'"
+    else
+        cmd2 = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
     let res2
     try{
         res2 = execSync(cmd2, (err, stdout, stderr) => {
@@ -46,8 +50,12 @@ function checkStatus(filename,logsDir, logstash_dir){
 
 
 function getResult(filename,logsDir, logstash_dir, file){
+    let cmd
     //Looking for the file's result 
-    const cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
+    if (process.platform === "win32" || process.platform === "win64")
+        cmd = "findstr "+logsDir+filename+" "+logsDir+"/result.log"
+    else
+        cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     try{
         res = execSync(cmd, (err, stdout, stderr) => {
             if (err)

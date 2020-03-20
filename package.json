@@ -19,6 +19,8 @@
   "dependencies": {
     "core-js": "^3.6.4",
     "csv-writer": "^1.6.0",
+    "python": "0.0.4",
+    "python-shell": "^1.0.8",
     "username": "^5.1.0",
     "vue": "^2.6.11",
     "vuetify": "^2.2.15"
