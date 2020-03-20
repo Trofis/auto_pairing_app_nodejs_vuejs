@@ -65,6 +65,8 @@ class WorkerPool extends EventEmitter {
 
         const worker = this.freeWorkers.pop()
         worker[kTaskInfo] = new WorkerPoolTaskInfo(callback)
+        
+
         worker.postMessage(task)
     }
     close(){
