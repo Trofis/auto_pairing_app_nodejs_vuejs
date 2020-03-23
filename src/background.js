@@ -8,6 +8,7 @@ const ipcMain = require('electron').ipcMain
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import { get } from 'http'
 import {PythonShell} from 'python-shell'
+import { isString } from 'util'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const os = require('os')
@@ -16,7 +17,6 @@ const execSync = require('child_process').execSync
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 const shell = require('shelljs')
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -28,7 +28,7 @@ let logsDir
 let codeDir
 let codeDirName
 let configName
-
+let script_win
 //const pool = new WorkerPool(os.cpus().length)
 var logstash_process
 var isExecuted
@@ -67,6 +67,8 @@ function createWindow () {
     win = null
     logstash_process.kill("SIGKILL")
   })
+
+   script_win = __dirname+"\\scripts\\script_windows.py"
 
 }
 
@@ -140,7 +142,7 @@ function _useWorkerTreatFiles(files, directory, event){
 
 }
 
-function logstashSynchronize(){
+function logstashSynchronize(event){
   let isExecutedCmd
   try
   {
@@ -154,46 +156,38 @@ function logstashSynchronize(){
           console.log(err)
         console.log("stdout ",stdout) 
         console.log("stdout ",stderr)
-      }).toString('utf-8').match(/(a[0-9]+)/g)
-      console.log(user)
+      }).toString('utf-8').match(/>([A-Z,a-z]+)/g)[0].replace(/>/g, '')
 
       codeDirName = "code_windows"
       configName = "logstash-config-windows.conf"
-      console.log(__filename)
-      console.log(__dirname)
 
-      var options = {
-        mode:'text',
-        pythonPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src\\python\\bin\\python',
-        pythonOptions:['-u'],
-        scriptPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src',
-        args: ['2' ,'C:\\Utilisateurs\\'+user[0]]
-      }
+      const getLogstashProcess = spawn('python',[script_win, '2', 'C:\\Users\\'+user]);
+      console.log('C:\\Users\\'+user)
+      getLogstashProcess.stdout.on('data', (data) => {
+        console.log(data.toString())
+        data.toString('utf-8') == 'False\r\n'||data.toString('utf-8') == 'False' ? logstash_dir= false : logstash_dir= data.toString('utf-8')
+        console.log(logstash_dir)
 
-      PythonShell.run('script_windows.py', options, (err, results) => {
-        if (err) throw err
-        console.log('results ', results)
-        logstash_dir = results
-        codeDir = logstash_dir+"/bash_code/"+codeDirName
+        if (!logstash_dir){
+          console.log('None logstash')
+          event.reply('lookingForLogstash', 'Logstash not found')
+        }else{
+          const logstashIsRunningProcess = spawn('python',[script_win, '8', 'logstash']);
+          event.reply('lookingForLogstash', 'Logstash found')
 
-      })
-      //logstash_dir = shell.find('C:/Utilisateurs/'+user[0]+'/Desktop').filter(function(file) { return file.match(/autoPairing$/); });
-
-
-
-      var options = {
-        mode:'text',
-        pythonPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src\\python\\bin\\python',
-        pythonOptions:['-u'],
-        scriptPath:'C:\\Utilisateurs\\A766646\\Documents\\auto-pairing-app\\src',
-        args: ['8' ,'logstash']
-      }
-      PythonShell.run('script_windows.py', options, (err, results) => {
-        if (err) throw err
-        console.log('results ', results)
-        logstash_dir = results
+          logstashIsRunningProcess.stdout.on('data', (data) => {
+            // console.log(data.toString('utf-8'))
+            isExecuted = data.toString('utf-8')
+            
+            if (!isExecuted){
+              logstash_process = spawn(logstash_dir+"/logstash-7.6.0/bin/logstash", ["-f", logstash_dir+"/config/"+configName, "-w", 1])
+              controller_logstash()
+            }
+          })
+        }
 
       })
+      
     }
     //Looking for autoPairing app 
     else{
@@ -204,6 +198,7 @@ function logstashSynchronize(){
         console.log("stdout ",stderr)
       }).toString('utf-8').replace(/\n/g, '')
       isExecutedCmd = 'ps -aux | grep logstash'
+      event.reply('lookingForLogstash', 'Logstash found')
 
       codeDirName = "code_linux"
       configName = "logstash-config-linux.conf"
@@ -222,18 +217,11 @@ function logstashSynchronize(){
     
       //Launch Logstash is not processing
       if (!isExecuted){
-        if (process.platform === "win32" || process.platform === "win64")
-          logstash_process = spawn(logstash_dir+"/logstash-7.6.0/bin/logstash", ["-f", logstash_dir+"/config/"+configName, "-w", 1])
-        else
-          logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", logstash_dir+"/config/"+configName, "-w", 1])
-        logstash_process.on('close', (code,signal) => {
-          console.log('child killed ',code, signal)
-        })
-        logstash_process.stdout.on('data', (data) => {
-          console.log(data.toString())
-        })
+        logstash_process = spawn('sh', [logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", logstash_dir+"/config/"+configName, "-w", 1])
+        controller_logstash()
       }
     }
+
 
     if (logstash_dir == "") throw new Error("logstash not found")
 
@@ -252,6 +240,15 @@ function logstashSynchronize(){
   
 }
 
+function controller_logstash(){
+  logstash_process.on('close', (code,signal) => {
+    console.log('child killed ',code, signal)
+  })
+  logstash_process.stdout.on('data', (data) => {
+    console.log(data.toString())
+  })
+}
+
 //------------------------------------------------//
 
 //----------------- CONTROLLERS ------------------//
@@ -262,14 +259,13 @@ function logstashSynchronize(){
 ipcMain.on('lookingForLogstash', (event) => {
   let message
   try{
-    logstashSynchronize()
+    logstashSynchronize(event)
     
   }catch(err){
     event.reply('lookingForLogstash', 'Logstash not found')
     console.log('lookingForLogstash : ', err)
   }
 
-  event.reply('lookingForLogstash', 'Logstash found')
 })
 
 //Zip files part
@@ -284,12 +280,10 @@ ipcMain.on('syncFiles', (event) => {
   let resultDialog = dialog.showOpenDialogSync(win, {
     properties: ["openDirectory"]
   })
-
   //Check if a directory has been selected
   if (resultDialog == null || resultDialog == ''){
     event.reply('syncFiles', 'No directory selected')
     continueProcess = false
-    
   }
 
   if (continueProcess)
@@ -299,15 +293,17 @@ ipcMain.on('syncFiles', (event) => {
     try{
       if(process.platform === "win32" || process.platform === "win64")
       {
-        const cmd = "python3 script_windows.py 3 "+directory
-        execSync(cmd, (err, stdout, stderr) => {
+        files = execSync("python "+script_win+" '3' '"+directory+"'" , (err, stdout, stderr) => {
           if (err)
             console.log(err)
           console.log("stdout ",stdout)
-          console.log("stdout ",stderr)
-        })
-       continueProcess = false
+        files+=stdout
+            console.log("stdout ",stderr)
+        }).toString('utf-8')
 
+        console.log(files)
+        if (files.length == 0)
+          throw Error('No zip files found')
       }
       else{
         files.push(execSync("find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'", (err, stdout, stderr) => {
@@ -320,6 +316,7 @@ ipcMain.on('syncFiles', (event) => {
       } 
     }catch(err){
       continueProcess = false
+      console.log(err)
       event.reply('syncFiles', 'No zip files found')
     }
     
@@ -487,14 +484,20 @@ if (isDevelopment) {
     process.on('message', data => {
       if (data === 'graceful-exit') {
         app.quit()
-        logstash_process.kill("SIGKILL")
+        try
+        {
+          logstash_process.kill("SIGKILL")
+
+        }catch(err){console.log('None logstash program to kill')}
 
       }
     })
   } else {
     process.on('SIGTERM', () => {
       app.quit()
-      logstash_process.kill("SIGKILL")
+      try{
+        logstash_process.kill("SIGKILL")
+      }catch(err){console.log('None logstash program to kill')}
 
     })
   }
