@@ -78,12 +78,12 @@ function _useWorkerTreatFiles(files, directory, event){
   let result = []
   let msg = ""
   let i = 0
-  
+  let platformUsed = process.platform
   const pool = new WorkerPool(os.cpus().length)
   event.reply('syncFilesResult', ['dir_zip', directory])
   // Launch worker for each file
   files.forEach((file) => {
-    pool.runTask({file, logsDir, logstash_dir}, (err, res) => {
+    pool.runTask({file, logsDir, logstash_dir, script_win, platformUsed}, (err, res) => {
       let item
       let continueProcess = true
       console.log("run task")
@@ -102,6 +102,8 @@ function _useWorkerTreatFiles(files, directory, event){
       if (continueProcess)
       {
         console.log("syncFilesResult")
+        console.log("res ",res)
+
         item = [file, res]
         event.reply('syncFilesResult', item)
         result.push(item)
@@ -177,10 +179,13 @@ function logstashSynchronize(event){
 
           logstashIsRunningProcess.stdout.on('data', (data) => {
             // console.log(data.toString('utf-8'))
-            isExecuted = data.toString('utf-8')
+            console.log(data.toString())
+            data.toString('utf-8') == 'False' ? isExecuted=false : true
+
             
             if (!isExecuted){
-              logstash_process = spawn(logstash_dir+"/logstash-7.6.0/bin/logstash", ["-f", logstash_dir+"/config/"+configName, "-w", 1])
+              logstash_process = spawn('python',[script_win, '1', logstash_dir, configName]);
+              
               controller_logstash()
             }
           })
@@ -249,6 +254,32 @@ function controller_logstash(){
   })
 }
 
+function continue_sync_files(files,event, directory){
+    if (process.platform != 'win32' && process.platform != 'win64')
+      files = files[0].toString().split('\n').filter((elem) => elem!='')
+    let sizeFiles = files.length
+    
+    //Reply to the server the size & the different box name
+    event.reply('syncFiles', sizeFiles)
+    files.forEach((elem) => { event.reply('syncFiles', elem)})
+    
+    //Exec code to extract log files from zip & send them to the logsDir
+    if (process.platform=="win32" || process.platform=="win64")
+    {
+      const executeCode = spawn('python',[script_win, '5', directory ]);
+      executeCode.stdout.on('data', (data) => {
+        console.log('data')
+      })
+    }
+    else
+      execSync(codeDir+" "+directory)
+
+
+  
+    //Starting treating files
+    _useWorkerTreatFiles(files, directory, event)
+}
+
 //------------------------------------------------//
 
 //----------------- CONTROLLERS ------------------//
@@ -290,20 +321,29 @@ ipcMain.on('syncFiles', (event) => {
   {
     //Set the directory selected
     directory = resultDialog[0]
+    console.log(directory)
     try{
       if(process.platform === "win32" || process.platform === "win64")
       {
-        files = execSync("python "+script_win+" '3' '"+directory+"'" , (err, stdout, stderr) => {
-          if (err)
-            console.log(err)
-          console.log("stdout ",stdout)
-        files+=stdout
-            console.log("stdout ",stderr)
-        }).toString('utf-8')
+        console.log("Get zip files")
+        const getZipFiles = spawn('python',[script_win, '3', directory]);
+        getZipFiles.stdout.on('data', (data) => {
+          console.log('data bef : ',data.toString())
+          console.log('data : ',data.toString().match(/CONTI_[1-9]*_[1-9]*_LOG.tar.gz/g))
+          files = data.toString().match(/CONTI_[1-9]*_[1-9]*_LOG.tar.gz/g)
+          console.log("files : ",files)
+          try{
+            if (files == null || files.length == 0)
+              throw Error('No zip files found')
 
-        console.log(files)
-        if (files.length == 0)
-          throw Error('No zip files found')
+            else
+            continue_sync_files(files,event,directory)
+          }catch(err){console.log(err)
+            event.reply('syncFiles', 'No zip files found')}
+          
+
+        })
+
       }
       else{
         files.push(execSync("find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'", (err, stdout, stderr) => {
@@ -313,27 +353,14 @@ ipcMain.on('syncFiles', (event) => {
           console.log("stdout ",stdout)
           console.log("stdout ",stderr)
         }).toString('utf-8'))
+        files.forEach((item) => {item = item.match(/(\/[^/]*)$/g).replace(/\//g, '')})
+        if (continueProcess)
+         continue_sync_files(files,event,directory)
       } 
     }catch(err){
       continueProcess = false
       console.log(err)
       event.reply('syncFiles', 'No zip files found')
-    }
-    
-    if (continueProcess)
-    {
-      files = files[0].toString().split('\n').filter((elem) => elem!='')
-      sizeFiles = files.length
-      
-      //Reply to the server the size & the different box name
-      event.reply('syncFiles', sizeFiles)
-      files.forEach((elem) => { event.reply('syncFiles', elem)})
-    
-      //Exec code to extract log files from zip & send them to the logsDir
-      execSync(codeDir+" "+directory)
-    
-      //Starting treating files
-      _useWorkerTreatFiles(files, directory, event)
     }
   }
 })
@@ -369,8 +396,14 @@ ipcMain.on('openDialogLocal', (event) => {
     {
       event.reply('openDialogLocal', 'Bad file')
     }else{
-      const cmd1 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/status.log | grep 'Done'"
-      const cmd2 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/result.log"
+      if (process.platform == "win32" || process.platform=="win64"){
+        cmd1 = "findstr '"+logsDir+filename+"' "+logsDir+"/status.log | findstr 'Done'"
+        cmd2 = "findstr "+logsDir+filename+" "+logsDir+"/result.log"
+      }
+      else {
+        const cmd1 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/status.log | grep 'Done'"
+        const cmd2 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/result.log"
+      }
       console.log(cmd1)
       console.log(cmd2)
 

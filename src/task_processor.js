@@ -3,11 +3,15 @@ const { execSync } = require('child_process')
 
 const ResStatusEmun = Object.freeze({"In progress": 1, "Done": 2})
 var res 
+let script_win
+let platform
 
 parentPort.on('message', (task) => {
-    const filename = task.file.match(/(\/[^/]*)$/g)
+    let filename = task.file 
+    script_win = task.script_win
+    platform = task.platformUsed
     let resStatus
-    getResult(filename,task.logsDir, task.logstash_dir, task.file)
+    getResult(filename,task.logsDir)
     if (res == null || res == ''){
         process = setInterval(() => {
             resStatus = checkStatus(filename, task.logsDir, task.logstash_dir)
@@ -15,7 +19,7 @@ parentPort.on('message', (task) => {
                 console.log("In progress")
             if (resStatus==2) 
             {
-                getResult(filename,task.logsDir, task.logstash_dir, task.file)
+                getResult(filename,task.logsDir)
                 clearInterval(process)
             }
             console.log("Wait 3s ..")
@@ -24,10 +28,11 @@ parentPort.on('message', (task) => {
     
 })
 
-function checkStatus(filename,logsDir, logstash_dir){
+function checkStatus(filename,logsDir){
     let cmd2
-    if (process.platform === "win32" || process.platform === "win64")
-        cmd2 = "findstr '"+logsDir+filename+"' "+logsDir+"/status.log | findstr 'Done'"
+    console.log("python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log")
+    if (platform == "win32" || platform == "win64")
+        cmd = "python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log"
     else
         cmd2 = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
     let res2
@@ -35,9 +40,10 @@ function checkStatus(filename,logsDir, logstash_dir){
         res2 = execSync(cmd2, (err, stdout, stderr) => {
             if (err)
               console.log(err)
-            console.log("stdout ",stdout)
+            console.log("stdout ",stdout.toString())
             console.log("stdout ",stderr)
-          }).toString('utf-8')
+          }).toString()
+          console.log('result2 ',res2)
     }catch(err){
         console.log(err)
         return ResStatusEmun['In progress']
@@ -49,20 +55,23 @@ function checkStatus(filename,logsDir, logstash_dir){
 }
 
 
-function getResult(filename,logsDir, logstash_dir, file){
+function getResult(filename,logsDir){
     let cmd
     //Looking for the file's result 
-    if (process.platform === "win32" || process.platform === "win64")
-        cmd = "findstr "+logsDir+filename+" "+logsDir+"/result.log"
+    if (platform == "win32" || platform == "win64")
+        cmd = "python "+script_win+" 7 "+logsDir+"/"+filename+" "+logsDir+"/result.log "
+    //cmd = "findstr "+logsDir+filename+" "+logsDir+"/result.log"
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     try{
         res = execSync(cmd, (err, stdout, stderr) => {
             if (err)
                 console.log(err)
-            console.log("stdout ",stdout)
+            console.log("stdout ",stdout.toString())
             console.log("stdout ",stderr)
-            }).toString('utf-8')
+            }).toString()
+            console.log('result : ', res)
+
     }catch(err){
         console.log(err)
     }
@@ -72,11 +81,17 @@ function getResult(filename,logsDir, logstash_dir, file){
     //if (count == 10) throw Error("Error : No result found")
     
     //If result contains something then extract the file's result
-    console.log("res ", res)
     try{
-        let reg = /log - (.*)/g
-        res = reg.exec(res)[1]
+        if (platform != "win32" && platform != "win64"){
+            let reg = /log - (.*)/g
+            res = reg.exec(res)[1]
+        }
+        else{
+            if (res == 'False' || res == 'False\r\n' || res == [])
+                throw Error('Not found')
+        }
         parentPort.postMessage(res)
+            
     }catch(err){
         console.log("1st check : not found in result log")
         res = null
