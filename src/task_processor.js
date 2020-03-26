@@ -32,7 +32,7 @@ function checkStatus(filename,logsDir){
     let cmd2
     console.log("python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log")
     if (platform == "win32" || platform == "win64")
-        cmd = "python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log"
+        cmd2 = "python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log"
     else
         cmd2 = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
     let res2
@@ -43,12 +43,10 @@ function checkStatus(filename,logsDir){
             console.log("stdout ",stdout.toString())
             console.log("stdout ",stderr)
           }).toString()
-          console.log('result2 ',res2)
     }catch(err){
         console.log(err)
         return ResStatusEmun['In progress']
     }
-    console.log(res2)
     if (res2 === '')
         return ResStatusEmun['In progress']
     return ResStatusEmun['Done']
@@ -69,9 +67,8 @@ function getResult(filename,logsDir){
                 console.log(err)
             console.log("stdout ",stdout.toString())
             console.log("stdout ",stderr)
-            }).toString()
-            console.log('result : ', res)
-
+            }).toString('utf-8')
+        console.log(res)
     }catch(err){
         console.log(err)
     }

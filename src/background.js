@@ -10,25 +10,25 @@ import { get } from 'http'
 import {PythonShell} from 'python-shell'
 import { isString } from 'util'
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const isDevelopment = process.env.NODE_ENV === 'development';
+
+
 const os = require('os')
 const WorkerPool = require('./model')
 const execSync = require('child_process').execSync
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
 const shell = require('shelljs')
+const staticPath = require('./config')
+const script_win = require('path').resolve(staticPath, 'scripts/script_windows.py')
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let win
-
 
 let logstash_dir
 let logsDir
 let codeDir
 let codeDirName
 let configName
-let script_win
 //const pool = new WorkerPool(os.cpus().length)
 var logstash_process
 var isExecuted
@@ -46,7 +46,6 @@ function createWindow () {
     nodeIntegration: true
   } })
   
-
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)
@@ -68,7 +67,7 @@ function createWindow () {
     logstash_process.kill("SIGKILL")
   })
 
-   script_win = __dirname+"\\scripts\\script_windows.py"
+   //script_win = __dirname+"\\scripts\\script_windows.py"
 
 }
 
@@ -92,7 +91,6 @@ function _useWorkerTreatFiles(files, directory, event){
       if (err)
       {
         console.log("error")
-
         console.log(err)
         item = [file, err]
         continueProcess = false
@@ -101,13 +99,12 @@ function _useWorkerTreatFiles(files, directory, event){
 
       if (continueProcess)
       {
-        console.log("syncFilesResult")
-        console.log("res ",res)
-
         item = [file, res]
         event.reply('syncFilesResult', item)
         result.push(item)
-
+        
+        console.log("i : ",i)
+        console.log("files : ",files.length)
         // If all files treated then write down all the results in result.log
         if (++i === files.length)
         {
@@ -117,7 +114,7 @@ function _useWorkerTreatFiles(files, directory, event){
           const createCsvWrite = require('csv-writer').createArrayCsvWriter
           const timestamp = new Date().getTime().toString()
           const csvWriter = createCsvWrite({
-            path: directory+'/'+timestamp+'result.csv',
+            path: directory+'/'+timestamp+'_result.csv',
             header : ["FILE", "RESULT"]
           })
           
@@ -151,6 +148,12 @@ function logstashSynchronize(event){
     exec("mkdir "+logsDir)
     exec("mkdir "+logsDir+"/all")
 
+    event.reply('infos', __dirname)
+    event.reply('infos',process.cwd())
+    event.reply('infos',__static)
+    event.reply('infos',process.env.BASE_URL)
+
+
     if (process.platform === "win32" || process.platform === "win64")
     {
       let user = execSync("quser", (err, stdout, stderr) => {
@@ -165,6 +168,7 @@ function logstashSynchronize(event){
 
       const getLogstashProcess = spawn('python',[script_win, '2', 'C:\\Users\\'+user]);
       console.log('C:\\Users\\'+user)
+      getLogstashProcess.stderr.on('data', (data) => {event.reply('infos', data.toString())})
       getLogstashProcess.stdout.on('data', (data) => {
         console.log(data.toString())
         data.toString('utf-8') == 'False\r\n'||data.toString('utf-8') == 'False' ? logstash_dir= false : logstash_dir= data.toString('utf-8')
@@ -184,6 +188,8 @@ function logstashSynchronize(event){
 
             
             if (!isExecuted){
+              console.log("launch logstash")
+              console.log(logstash_dir)
               logstash_process = spawn('python',[script_win, '1', logstash_dir, configName]);
               
               controller_logstash()
@@ -226,8 +232,6 @@ function logstashSynchronize(event){
         controller_logstash()
       }
     }
-
-
     if (logstash_dir == "") throw new Error("logstash not found")
 
   }
@@ -236,13 +240,6 @@ function logstashSynchronize(event){
     console.log("logstashSynchronize : ",err)
     throw Error(err)
   }
-  //Init LogsDir
-  
-
-  //Setting codeDirName & configName
-
-  //Checking if logstash is running 
-  
 }
 
 function controller_logstash(){
@@ -250,6 +247,9 @@ function controller_logstash(){
     console.log('child killed ',code, signal)
   })
   logstash_process.stdout.on('data', (data) => {
+    console.log(data.toString())
+  })
+  logstash_process.stderr.on('data', (data) => {
     console.log(data.toString())
   })
 }
@@ -328,10 +328,7 @@ ipcMain.on('syncFiles', (event) => {
         console.log("Get zip files")
         const getZipFiles = spawn('python',[script_win, '3', directory]);
         getZipFiles.stdout.on('data', (data) => {
-          console.log('data bef : ',data.toString())
-          console.log('data : ',data.toString().match(/CONTI_[1-9]*_[1-9]*_LOG.tar.gz/g))
-          files = data.toString().match(/CONTI_[1-9]*_[1-9]*_LOG.tar.gz/g)
-          console.log("files : ",files)
+          files = data.toString().match(/CONTI_[0-9]*_[0-9]*_LOG.tar.gz/g)
           try{
             if (files == null || files.length == 0)
               throw Error('No zip files found')
@@ -379,7 +376,6 @@ ipcMain.on('openDialogLocal', (event) => {
         {name : "log", extensions: ['log']}
       ]
   })
-  console.log(resultDialog)
   if (resultDialog == undefined){
     event.reply('openDialogLocal', 'No file selected')
     continueProcess=false
@@ -389,20 +385,27 @@ ipcMain.on('openDialogLocal', (event) => {
     let reg 
     
     file = resultDialog[0]
+    console.log(file)
     const log_name_dir =  file.split('/').join('_')+'-folder'
-    filename = file.match(/(\/[^/]*)$/g)[0]
-    console.log(filename)
-    if (filename != '/ModemD_00000000.log')
+    console.log(file.match(/(\\[^\\]*)$/g))
+    if (process.platform == "win32" || process.platform == "win64")
+      filename = file.match(/(\\[^\\]*)$/g)[0]
+    else
+      filename = file.match(/(\/[^/]*)$/g)[0]
+    if (filename != '/ModemD_00000000.log' && filename != '\\ModemD_00000000.log')
     {
       event.reply('openDialogLocal', 'Bad file')
     }else{
+      filename = '/ModemD_00000000.log'
+      let cmd1
+      let cmd2
       if (process.platform == "win32" || process.platform=="win64"){
-        cmd1 = "findstr '"+logsDir+filename+"' "+logsDir+"/status.log | findstr 'Done'"
-        cmd2 = "findstr "+logsDir+filename+" "+logsDir+"/result.log"
+        cmd1 = "python "+script_win+" 6 "+logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+logsDir+"/status.log"
+        cmd2 = "python "+script_win+" 7 "+logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+logsDir+"/result.log "
       }
       else {
-        const cmd1 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/status.log | grep 'Done'"
-        const cmd2 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/result.log"
+        cmd1 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/status.log | grep 'Done'"
+        cmd2 = "grep '"+logsDir+'/log_modemD_'+log_name_dir+filename+"' "+logsDir+"/result.log"
       }
       console.log(cmd1)
       console.log(cmd2)
@@ -414,20 +417,33 @@ ipcMain.on('openDialogLocal', (event) => {
             console.log("stdout ",stdout)
             console.log("stdout ",stderr)
         }).toString('utf-8')
-        continueProcess = false
-        console.log("result exists")
-        getResult(cmd2, event)
+        console.log(resProcess.match(/False/g))
+        console.log(resProcess)
+        if (process.platform == "win32" || process.platform == "win64")
+          resProcess.match(/False/g) != null ? resProcess=false : resProcess=true
+        console.log(resProcess)
+        
+        if (resProcess){
+          continueProcess = false
+          console.log("result exists")
+          getResult(cmd2, event)
+
+        }
       }catch(err){
         console.log(err)
       }
       if (continueProcess){
         const timestamp = Date.now()
-        exec('mkdir '+logsDir+'/log_modemD_'+log_name_dir)
-        exec('cp '+file+' '+logsDir+'/log_modemD_'+log_name_dir)
+        console.log('mkdir '+logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
+        exec('mkdir '+logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
+        if (process.platform == "win32" || process.platform == "win64")
+          exec('xcopy '+file+' '+logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
+        else
+          exec('cp '+file+' '+logsDir+'/log_modemD_'+log_name_dir)
 
         console.log('cmd2 ', cmd2)
         setInterval(() => {
-          if (getResult(cmd2))
+          if (getResult(cmd2, event))
             clearInterval(process)
       }, 3000);
 
@@ -447,12 +463,14 @@ function getResult(cmd, event){
     }).toString('utf-8')
     console.log("after process")
     console.log(resProcess)
-    if (resProcess != '')
+    if (resProcess != '' && resProcess != 'False\r\n' && resProcess != 'False')
     {
-      let reg = /log - (.*)/g
-      resProcess = reg.exec(resProcess)[1]
-      console.log(resProcess)
+      if (process.platform != "win32" && process.platform != "win64"){
+        let reg = /log - (.*)/g
+        resProcess = reg.exec(resProcess)[1]
 
+      }
+      console.log(resProcess)
       event.reply('openDialogLocal', resProcess)
       return true
     }
@@ -519,7 +537,7 @@ if (isDevelopment) {
         app.quit()
         try
         {
-          logstash_process.kill("SIGKILL")
+          logstash_process.kill("8092")
 
         }catch(err){console.log('None logstash program to kill')}
 

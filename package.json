@@ -13,14 +13,22 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "install": "npip install",
+    "nopenv": "nopenv",
+    "nopy": "nopy",
+    "npip": "npip"
   },
+  "electronWebpack": { "renderer": { "webpackConfig": "webpack.renderer.additions.js" } },
   "main": "background.js",
   "dependencies": {
     "core-js": "^3.6.4",
     "csv-writer": "^1.6.0",
+    "file-loader": "^6.0.0",
+    "nopy": "^0.2.7",
     "python": "0.0.4",
     "python-shell": "^1.0.8",
+    "raw-loader": "^4.0.0",
     "username": "^5.1.0",
     "vue": "^2.6.11",
     "vuetify": "^2.2.15"

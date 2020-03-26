@@ -159,6 +159,7 @@ export default {
     ipcRenderer.on("syncFiles", (event,arg) =>{
       console.log(arg)
       this.overlay=true
+      this.actualSize = 0
       if (typeof arg == "number" )
         if (arg == 0)
         {
@@ -202,6 +203,7 @@ export default {
         this.dir_zip = arg[1]
       }else{
         this.files.forEach((elem, i) => { 
+          console.log(arg[0]," ", arg[1])
           if (elem['file'] == arg[0]) 
           {
             this.actualUpdateSize++
@@ -213,6 +215,8 @@ export default {
       }
       
     })
+
+    ipcRenderer.on('infos', (event,arg) => {console.log("Info : ", arg)})
 
     ipcRenderer.on("openDialogLocal", (event,arg) =>{
       this.overlay_menu = false
