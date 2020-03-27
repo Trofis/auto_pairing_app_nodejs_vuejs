@@ -31,7 +31,7 @@ class WorkerPool extends EventEmitter {
     }
 
     addNewWorker(){
-        const worker = new Worker(path.resolve('src/task_processor.js'))
+        const worker = new Worker(path.resolve('src/scripts_js/task_processor.js'))
         worker.on('message', (result) => {
             // In case of success: Call the callback that was passed to 'runtask',
             // remove the 'TaskInfo' associated with the Worker, and mark it as free

@@ -11,6 +11,8 @@ parentPort.on('message', (task) => {
     script_win = task.script_win
     platform = task.platformUsed
     let resStatus
+
+    console.log(filename, script_win, task.logsDir, task.logstash_dir)
     getResult(filename,task.logsDir)
     if (res == null || res == ''){
         process = setInterval(() => {
