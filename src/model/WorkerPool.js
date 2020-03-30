@@ -2,6 +2,7 @@ const { AsyncResource } = require('async_hooks')
 const { EventEmitter } = require('events')
 const path = require('path')
 const { Worker } = require('worker_threads')
+const loc = require('../modules/locations') 
 
 const kTaskInfo = Symbol('kTaskInfo')
 const kWorkerFreedEvent = Symbol('kWorkerFreedEvent')
@@ -31,7 +32,14 @@ class WorkerPool extends EventEmitter {
     }
 
     addNewWorker(){
-        const worker = new Worker(path.resolve('src/scripts_js/task_processor.js'))
+        let worker
+        worker = new Worker(loc.task_processor)
+        /*
+        try{
+            worker = new Worker(path.resolve('src/scripts_js/task_processor.js'))
+        }catch(err){
+            worker = new Worker(loc.task_processor)
+        }*/
         worker.on('message', (result) => {
             // In case of success: Call the callback that was passed to 'runtask',
             // remove the 'TaskInfo' associated with the Worker, and mark it as free

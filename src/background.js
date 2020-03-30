@@ -53,7 +53,10 @@ function createWindow () {
 
   win.on('closed', () => {
     win = null
-    logstash_process.kill("SIGKILL")
+    try{
+      global.logstash_process.kill("SIGKILL")
+    }
+    catch(err){console.log("Logstash not launched")}
   })
 }
 
@@ -243,7 +246,7 @@ app.on('window-all-closed', () => {
     try{
       console.log('Window closed')
       if (!isExecuted)
-        logstash_process.kill('SIGKILL')
+        global.logstash_process.kill('SIGKILL')
       
     }catch(err){
       console.log("Logstash is not running OK")
@@ -288,7 +291,7 @@ if (isDevelopment) {
         app.quit()
         try
         {
-          logstash_process.kill("8092")
+          global.logstash_process.kill("8092")
 
         }catch(err){console.log('None logstash program to kill')}
 
@@ -298,7 +301,7 @@ if (isDevelopment) {
     process.on('SIGTERM', () => {
       app.quit()
       try{
-        logstash_process.kill("SIGKILL")
+        global.logstash_process.kill("SIGKILL")
       }catch(err){console.log('None logstash program to kill')}
 
     })

@@ -1,7 +1,7 @@
 const execSync = require('child_process').execSync
 const exec = require('child_process').exec
 const spawn = require('child_process').spawn
-
+const controller_logstash = require('../scripts_js/ControllerLogstash.js')
 const loc = require('../modules/locations')
 const global = require('../modules/global_vars')
  module.exports = function(event){
@@ -87,16 +87,18 @@ function linux_synchronize(){
           console.log('None logstash')
           event.reply('lookingForLogstash', 'Logstash not found')
         }else{
-          const logstashIsRunningProcess = spawn('python',[loc.script_windows, '8', 'logstash']);
+          const logstashIsRunningProcess = spawn('python',[loc.script_windows, '8', '127.0.0.1', 9600]);
           event.reply('lookingForLogstash', 'Logstash found')
 
           logstashIsRunningProcess.stdout.on('data', (data) => {
             // console.log(data.toString('utf-8'))
             console.log(data.toString())
             let isExecuted
-            data.toString('utf-8') == 'False' ? isExecuted=false : isExecuted=true
+            console.log(data.toString('utf-8').match(/False/g))
 
+            data.toString('utf-8').match(/False/g) != null ? isExecuted=false : isExecuted=true
             
+            console.log(isExecuted)
             if (!isExecuted){
               console.log("launch logstash")
               console.log(global.logstash_dir)

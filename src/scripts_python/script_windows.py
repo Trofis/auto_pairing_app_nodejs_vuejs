@@ -6,6 +6,7 @@ import tarfile
 import shutil
 import sys
 import psutil
+import socket
 #from pip import main as pipmain
 
 def exec_logstash(path_logstash, config):
@@ -94,14 +95,17 @@ def get_result(file, result_file):
             return result[0]
         return False
 
-def isRunning(processName):
-    for proc in psutil.process_iter():
-        try:
-            if processName.lower() in proc.name().lower():
-                return True
-        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-            pass
-    return False
+def isRunning(ip, port):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect((ip, int(port)))
+        s.shutdown(2)
+        return True
+    except:
+        return False
+
+
+   
 
 #pipmain(['install', 'psutil'])
 
@@ -123,7 +127,8 @@ elif sys.argv[1] == '6':
 elif sys.argv[1] == '7':
     print(get_result(sys.argv[2], sys.argv[3]))
 elif sys.argv[1] == '8':
-    print(isRunning(sys.argv[2]))
+    print(isRunning(sys.argv[2], sys.argv[3]))
+
 sys.stdout.flush()
 
 

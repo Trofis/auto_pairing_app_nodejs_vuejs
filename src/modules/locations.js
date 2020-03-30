@@ -31,6 +31,7 @@ const locations = {
     '__auto_pairing_app' : __auto_pairing_app,
     'script': path.join(__auto_pairing_app,'src/scripts_python'),
     'script_windows': path.join(__auto_pairing_app, '../src/scripts_python/script_windows.py'),
+    'task_processor': path.join(__auto_pairing_app, '../src/scripts_js/task_processor.js'),
 
 
      // Loggers
