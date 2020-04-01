@@ -4,10 +4,9 @@
 const global = {
     'logstash_dir':'',
     'logsDir':'',
-    'codeDir':'',
-    'codeDirName':'',
     'configName':'',
-    'logstash_process':''
+    'logstash_process':'',
+    'log_name_dir':''
 }
 
 module.exports=global

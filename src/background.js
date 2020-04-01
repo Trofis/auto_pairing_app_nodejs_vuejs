@@ -49,7 +49,7 @@ function createWindow () {
   if (process.platform === "win32" || process.platform === "win64")
     global.logsDir = "C:/logs_modem_files"
   else 
-    global.logsDir = "/var/logs_modem_files"
+    global.logsDir = "/tmp/logs_modem_files"
 
   win.on('closed', () => {
     win = null
@@ -134,9 +134,11 @@ ipcMain.on('syncFiles', (event) => {
           console.log("stdout ",stdout)
           console.log("stdout ",stderr)
         }).toString('utf-8'))
-        files.forEach((item) => {item = item.match(/(\/[^/]*)$/g).replace(/\//g, '')})
+        files.forEach((item) => {item = (item.match(/(\/[^/]*)$/g)).toString().replace(/\/|\\n/g, '')})
+        console.log(files)
+
         if (continueProcess)
-         continue_sync_files(files,event, directory)
+          process_zip_files(files,event, directory)
       } 
     }catch(err){
       continueProcess = false
@@ -169,9 +171,7 @@ ipcMain.on('openDialogLocal', (event) => {
     let reg 
     
     file = resultDialog[0]
-    console.log(file)
-    const log_name_dir =  file.split('/').join('_')+'-folder'
-    console.log(file.match(/(\\[^\\]*)$/g))
+    global.log_name_dir =  file.split('/').join('_')+'-folder'
     if (process.platform == "win32" || process.platform == "win64")
       filename = file.match(/(\\[^\\]*)$/g)[0]
     else
@@ -188,8 +188,8 @@ ipcMain.on('openDialogLocal', (event) => {
         cmd2 = "python "+loc.script_windows+" 7 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
       }
       else {
-        cmd1 = "grep '"+loc.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/status.log | grep 'Done'"
-        cmd2 = "grep '"+loc.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/result.log"
+        cmd1 = "grep '"+global.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/status.log | grep 'Done'"
+        cmd2 = "grep '"+global.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/result.log"
       }
       console.log(cmd1)
       console.log(cmd2)
@@ -218,12 +218,17 @@ ipcMain.on('openDialogLocal', (event) => {
       }
       if (continueProcess){
         const timestamp = Date.now()
-        console.log('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
-        exec('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
-        if (process.platform == "win32" || process.platform == "win64")
-          exec('xcopy '+file+' '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+log_name_dir.replace(/[\\:]/g,'-'))
-        else
-          exec('cp '+file+' '+global.logsDir+'/log_modemD_'+log_name_dir)
+        console.log('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
+        if (process.platform == "win32" || process.platform == "win64"){
+          exec('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
+
+          exec('xcopy '+file+' '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
+        }
+        else{
+          exec('mkdir '+global.logsDir+'/log_modemD_'+global.log_name_dir)
+
+          exec('cp '+file+' '+global.logsDir+'/log_modemD_'+global.log_name_dir)
+        }
 
         console.log('cmd2 ', cmd2)
         setInterval(() => {

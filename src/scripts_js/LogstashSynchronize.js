@@ -18,7 +18,7 @@ const global = require('../modules/global_vars')
       }
       //Looking for autoPairing app 
       else{
-        linux_synchronize()
+        linux_synchronize(event)
       }
     }
     catch(err)
@@ -28,8 +28,8 @@ const global = require('../modules/global_vars')
     }
   }
 
-function linux_synchronize(){
-    logstash_dir = execSync("find ~ -name 'autoPairing'", (err, stdout, stderr) => {
+function linux_synchronize(event){
+    global.logstash_dir = execSync("find ~ -name 'autoPairing'", (err, stdout, stderr) => {
     if (err)
         console.log(err)
     console.log("stdout ",stdout)
@@ -38,9 +38,7 @@ function linux_synchronize(){
     isExecutedCmd = 'ps -aux | grep logstash'
     event.reply('lookingForLogstash', 'Logstash found')
 
-    global.codeDirName = "code_linux"
     global.configName = "logstash-config-linux.conf"
-    global.codeDir = global.logstash_dir+"/bash_code/"+global.codeDirName
 
     try {
     isExecuted = execSync(isExecutedCmd , (err, stdout, stderr) => {
@@ -48,14 +46,14 @@ function linux_synchronize(){
     console.log(err)
         console.log("stdout ",stdout)
         console.log("stdout ",stderr)
-    }).toString('utf-8').replace(/\n/g, '').match(/grep/g).length > 2
+    }).toString('utf-8').replace(/\n/g, '').match(/logstash/g).length > 2
     }
     catch(err){console.log(err); isExecuted = false}
 
 
     //Launch Logstash is not processing
     if (!isExecuted){
-        global.logstash_process = spawn('sh', [global.logstash_dir+"/logstash-7.6.0/bin/logstash", "-f", global.logstash_dir+"/config/"+global.configName, "-w", 1])
+        global.logstash_process = spawn('sh', [global.logstash_dir+"/logstash-7.6.1/bin/logstash", "-f", global.logstash_dir+"/config/"+global.configName, "-w", 1])
         controller_logstash()
     }
 
@@ -72,7 +70,6 @@ function linux_synchronize(){
         console.log("stdout ",stderr)
       }).toString('utf-8').match(/>([A-Z,a-z]+)/g)[0].replace(/>/g, '')
 
-      global.codeDirName = "code_windows"
       global.configName = "logstash-config-windows.conf"
 
       const getLogstashProcess = spawn('python',[loc.script_windows, '2', 'C:\\Users\\'+user]);

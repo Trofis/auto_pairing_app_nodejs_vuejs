@@ -1,0 +1,29 @@
+#!/bin/bash
+files=$(ls $1 | grep 'CONTI.*_LOG.tar.gz')
+echo $files
+for f in $files
+do
+    mkdir "$1/$f-folder"
+    tar xf "$1/$f" -C "$1/$f-folder"
+    mkdir "/tmp/logs_modem_files"
+    mkdir "/tmp/logs_modem_files/$f-folder"
+    count1=$(ls -1 $1/$f-folder/archives/ModemD_00000000.log 2>/dev/null | wc -l)
+    count2=$(ls -1 /tmp/logs_modem_files/$f-folder/ 2>/dev/null | wc -l)
+    echo $1
+    echo $f
+
+
+    echo $count1
+    echo $count2
+
+    if [ $count1 != 0 ] && [ $count2 = 0 ]
+    then
+        mv $1/$f-folder/archives/ModemD_00000000.log /tmp/logs_modem_files/$f-folder/
+    else
+        if [ $count2 = 0 ]
+        then
+            mv $1/$f-folder/ModemD_00000000.log /tmp/logs_modem_files/$f-folder/
+        fi
+    fi
+    rm -rdf $1/$f-folder
+done

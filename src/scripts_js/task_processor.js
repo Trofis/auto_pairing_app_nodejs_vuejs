@@ -7,7 +7,8 @@ let script_win
 let platform
 
 parentPort.on('message', (task) => {
-    let filename = task.file 
+    let filename
+    task.file == undefined ? filename = task.filename : filename = task.file
     script_win = task.script_win
     platform = task.platformUsed
     let resStatus
@@ -32,7 +33,6 @@ parentPort.on('message', (task) => {
 
 function checkStatus(filename,logsDir){
     let cmd2
-    console.log("python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log")
     if (platform == "win32" || platform == "win64")
         cmd2 = "python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log"
     else
