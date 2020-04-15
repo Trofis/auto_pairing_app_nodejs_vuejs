@@ -14,7 +14,7 @@
             <p class="mt-1">Local - zip files: </p>
           </v-col>
           <v-col class="d-flex justify-end">
-            <v-btn rounded color="primary" @click="syncFiles"> Select directory</v-btn>
+            <v-btn rounded color="primary" @click="multipleFiles"> Select directory</v-btn>
           </v-col>
         </v-row>
       </div>
@@ -121,8 +121,8 @@ export default {
     }
   },
   methods: {
-    syncFiles(){
-      ipcRenderer.send("syncFiles")
+    multipleFiles(){
+      ipcRenderer.send("multipleFiles")
       this.files = []
       this.actualSize = 0
       this.valueCircular=0
@@ -156,7 +156,7 @@ export default {
       this.sheet = true
       
     })
-    ipcRenderer.on("syncFiles", (event,arg) =>{
+    ipcRenderer.on("multipleFiles", (event,arg) =>{
       console.log(arg)
       this.overlay=true
       this.actualSize = 0
@@ -195,7 +195,7 @@ export default {
         
       }
     })
-    ipcRenderer.on('syncFilesResult', (event, arg) => {
+    ipcRenderer.on('multipleFilesResult', (event, arg) => {
       console.log('Incoming results')
       console.log(arg)
       if (arg[0]=='dir_zip')

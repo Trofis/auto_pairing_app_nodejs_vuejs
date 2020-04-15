@@ -1,4 +1,4 @@
-const global = require('../modules/global_vars')
+const global = require('../../modules/global_vars')
 
 function controller_logstash(){
     global.logstash_process.on('close', (code,signal) => {

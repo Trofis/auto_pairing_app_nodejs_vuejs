@@ -5,26 +5,18 @@ const electron=require('electron')
 const fs=require('fs')
 
 
-/*
-if (typeof(electron.remote) !== undefined)
-    app = electron.remote.app
-else
-    app = electron.app*/
 let app
 let __auto_pairing_app
 let __user_data
-try{
+
+if (electron.app == undefined)
+    app = electron.remote.app
+else
     app = electron.app
 
-    __auto_pairing_app = app.getAppPath()
-    __user_data = app.getPath('userData')
+__auto_pairing_app = app.getAppPath()
+__user_data = app.getPath('userData')
 
-}catch(err){
-    app = electron.remote.app
-
-    __auto_pairing_app = app.getAppPath()
-    __user_data = app.getPath('userData')
-}
 
 const locations = {
     // General folder
@@ -37,10 +29,6 @@ const locations = {
      'logs_folder': path.join(__user_data, 'logs'),
      'log_js': path.join(__user_data, 'logs/debug_js.log'),
      'log_python': path.join(__user_data, 'logs/debug_py.log'),
-
-    // Python executable
-    'python_win':path.join(__auto_pairing_app, '../env/python.exe')
-
 }
 
 module.exports = locations;
