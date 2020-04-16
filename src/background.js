@@ -10,12 +10,10 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 //General import
-const {execSync, exec, spawn} = require('child_process')
 const {sendFilesToLogstash, _useWorkerTreatFiles, getZipFilesLin, getZipFilesWin}= require('./utils/js/multipleFiles')
-const loc = require('./modules/locations')
 const global = require('./modules/global_vars')
 const {synchronize_with_logstash} = require('./utils/js/synchronyseWithLogstash.js')
-const getResultLocal = require('./utils/js/singleFile.js')
+const {sendFileToLogstash} = require('./utils/js/singleFile')
 
 //Window
 let win
@@ -143,9 +141,10 @@ ipcMain.on('openDialogLocal', async(event) => {
   global.log_name_dir = file.split('/').join('_')+'-folder'
 
   try{
-    const result = await sendFileToLogstash(file)
-    event.reply('openDialogLocal', result)
+    sendFileToLogstash(file, event)
   }catch(e){
+    console.log(e)
+
     return event.reply('openDialogLocal', 'Bad file')
   }
 })

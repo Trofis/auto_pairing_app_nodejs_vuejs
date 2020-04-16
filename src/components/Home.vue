@@ -227,7 +227,7 @@ export default {
       else if (arg == 'Bad file')
         this.message = 'Please you must select a ModemD_00000000.log file'
       else
-        this.message = arg
+        this.message = arg.file+" - "+arg.result
     })
   
   }

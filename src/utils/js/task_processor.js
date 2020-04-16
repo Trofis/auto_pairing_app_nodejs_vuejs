@@ -1,5 +1,5 @@
 const { parentPort } = require('worker_threads')
-const { exec } = require('child_process')
+const { execSync } = require('child_process')
 
 const ResStatusEmun = Object.freeze({"In progress": 1, "Done": 2})
 let script_win
@@ -33,7 +33,7 @@ const checkStatus = async(filename,logsDir) => {
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
 
-    const res = await exec(cmd).toString()
+    const res = await execSync(cmd).toString()
     if (res === '')
         return ResStatusEmun['In progress']
     return ResStatusEmun['Done']
@@ -48,7 +48,7 @@ const getResult = async(filename,logsDir) => {
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     
-    const res = await exec(cmd).toString()
+    const res = await execSync(cmd).toString()
     
     // Clear data
     if (platform != "win")

@@ -2,6 +2,7 @@ const WorkerPool = require('../../model/WorkerPool')
 const os = require('os')
 const loc = require('../../modules/locations.js')
 const global = require('../../modules/global_vars.js')
+const { exec, execSync } = require('child_process')
 
 
 const csvWriter = async(directory) => {
@@ -18,16 +19,16 @@ const csvWriter = async(directory) => {
 const sendFilesToLogstash = async(directory) => {
   if (global.os == "win")
     {
-      const cmd = 'python '+loc.script_windows+" 5 "+directory
-      exec(cmd).toString()
+      const cmd = 'python '+loc.logstashApp+" 5 "+directory
+      exec(cmd)
     }
     else
       exec(loc.code_linux+" "+directory)
 }
 
 const getZipFilesWin = async (directory) => {
-  const cmd = 'python '+loc.script_windows+" 3 "+directory
-  const data = await exec(cmd).toString()
+  const cmd = 'python '+loc.logstashApp+" 3 "+directory
+  const data = await execSync(cmd).toString()
   
   const files = data.toString().match(/CONTI_[0-9]*_[0-9]*_LOG.tar.gz/g)
 
@@ -38,7 +39,7 @@ const getZipFilesWin = async (directory) => {
 const getZipFilesLin = async (directory) => {
   consoel.log("ok")
   const cmd = "find "+directory+" -name '*.tar.gz' | grep 'CONTI.*_LOG.tar.gz'"
-  const data = await exec(cmd)
+  const data = await execSync(cmd)
   console.log("data",data)
   const files = data.toString()
   files.forEach((item) => {item = (item.match(/(\/[^/]*)$/g)).toString().replace(/\/|\\n/g, '')})
@@ -59,7 +60,7 @@ const _useWorkerTreatFiles = (files,directory, event) => {
     // Clear data
     if (global.os === "win")
       filename = "/"+file.match(/CONTI_.*_LOG.tar.gz/g)[0]
-    pool.runTask({filename, logsDir:global.logsDir, logstash_dir:global.logstash_dir, script_win:loc.script_windows, platformUsed:global.os}, (err, res) => {
+    pool.runTask({filename, logsDir:global.logsDir, logstash_dir:global.logstash_dir, script_win:loc.logstashApp, platformUsed:global.os}, (err, res) => {
       if (err)
         return event.reply('syncFilesResult', [file, err])
 

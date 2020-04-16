@@ -8,6 +8,15 @@ import sys
 import psutil
 import socket
 
+try:
+    from pip import main as pipmain
+except ImportError:
+    from pip._internal import main as pipmain
+
+if 'psutil' not in sys.modules:
+    pipmain(['install', 'psutil'])
+
+
 # --------------------------------------------
 #        Functions relative to windows
 # --------------------------------------------
@@ -183,9 +192,26 @@ def isRunning(ip, port):
     except:
         return False
 
+def setUpEnvironment():
+    """ Check if logstash is already running
+    Parameters :
+        - ip
+        - port
 
+    Output : Boolean 
+
+    Error : /
+    """
+    if not os.path.isdir("/tmp/logs_modem_files"):
+        os.mkdir("/tmp/logs_modem_files")
+    if not os.path.isfile("/tmp/logs_modem_files/result.log"):
+        Path('/tmp/logs_modem_files/result.log').touch()
+    if not os.path.isfile("/tmp/logs_modem_files/status.log"):
+        Path('/tmp/logs_modem_files/status.log').touch()
    
 # Switch deciding which action to execute
+
+
 
 if sys.argv[1] == '1':
     exec_logstash(sys.argv[2], sys.argv[3])
@@ -203,6 +229,8 @@ elif sys.argv[1] == '7':
     print(get_result(sys.argv[2], sys.argv[3]))
 elif sys.argv[1] == '8':
     print(isRunning(sys.argv[2], sys.argv[3]))
+elif sys.argv[1] == '9':
+    setUpEnvironment()
 
 sys.stdout.flush()
 

@@ -1,26 +1,31 @@
-const execSync = require('child_process').execSync
+const {execSync, exec} = require('child_process')
 const global = require('../../modules/global_vars')
+const loc = require('../../modules/locations')
 
-const getResultLocal = async(cmd) => {
-  let data = exec(cmd).toString().replace('\r\n','')
 
-  if (data != 'False'){
+const getResultLocal = (cmd, file) => {
+  const data = execSync(cmd).toString().replace('\r\n','')
+  // if (global.os == "win")
+  //   data = (/log - (.*)/g).exec(data)[1]
+  return {file, result:(/no error|error pattern 3/g).exec(data)[0].toString()}
+}
+
+const checkResultLocal = (cmd) =>{
+  try{
+    let isResultExist = execSync(cmd).toString()
+  
     if (global.os == "win")
-      data = (/log - (.*)/g).exec(data)[1]
-    return data
+      return isResultExist.match(/False/g) != null ? false : true
+    return isResultExist
+  }catch(error){
+    console.log('error')
+    return false
   }
-  return false
 }
 
-const checkResultLocal = async(cmd) =>{
-  let isResultExist = await exec(cmd).toString()
+const setUpForLogstash = async(file) => {
+  await exec('python '+loc.logstashApp+' 9')
 
-  if (global.os == "win")
-    return isResultExist.match(/False/g) != null ? false : true
-  return isResultExist
-}
-
-const setUpForLogstash = (file) => {
   if (global.os == "win"){
     exec('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
 
@@ -33,32 +38,34 @@ const setUpForLogstash = (file) => {
   }
 }
 
-const sendFileToLogstash = async(file) => {
+const sendFileToLogstash = async(file, event) => {
   let filename
   let cmd1 
   let cmd2
-  if (global.os = "win"){
+  
+  if (global.os == "win"){
     filename = file.match(/(\\[^\\]*)$/g)[0]
-    cmd1 = "python "+loc.script_windows+" 6 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/status.log"
-    cmd2 = "python "+loc.script_windows+" 7 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
+    cmd1 = "python "+loc.logstashApp+" 6 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/status.log"
+    cmd2 = "python "+loc.logstashApp+" 7 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
   }
   else{
     filename = file.match(/(\/[^/]*)$/g)[0]
     cmd1 = "grep '"+global.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/status.log | grep 'Done'"
     cmd2 = "grep '"+global.logsDir+'/log_modemD_'+global.log_name_dir+filename+"' "+global.logsDir+"/result.log"
   }
-
+  
+  
   if (filename != '/ModemD_00000000.log' && filename != '\\ModemD_00000000.log')
     throw Error()
 
   if (checkResultLocal(cmd1))
-    return getResultLocal(cmd2)
+    event.reply('openDialogLocal', getResultLocal(cmd2,file))
   else{
-    setUpForLogstash(file)
-    return await setInterval(async() => {
+    await setUpForLogstash(file)
+    return setInterval(() => {
       if (checkResultLocal(cmd1)){
         clearInterval(process)
-        return getResultLocal(cmd2)
+        event.reply('openDialogLocal', getResultLocal(cmd2,file))
       }
     }, 6000);
   }
