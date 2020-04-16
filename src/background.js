@@ -80,7 +80,7 @@ ipcMain.on('lookingForLogstash', (event) => {
 })
 
 //Zip files part
-ipcMain.on('multipleFiles', async(event) => {
+ipcMain.on('multipleFiles', (event) => {
   //Select zip files' directory
   const resultDialog = dialog.showOpenDialogSync(win, {properties: ["openDirectory"]})
 
@@ -96,9 +96,9 @@ ipcMain.on('multipleFiles', async(event) => {
   let files
   try{
     if(global.os === "win")
-      files = await getZipFilesWin(directory)
+      files = getZipFilesWin(directory)
     else
-      files = await getZipFilesLin(directory)
+      files = getZipFilesLin(directory)
   }catch(err){
     return event.reply('multipleFiles', 'No zip files found')
   }
@@ -108,8 +108,8 @@ ipcMain.on('multipleFiles', async(event) => {
   const sizeFiles = files.length
   
   //Reply to the server the size & the different box name
-  event.reply('syncFiles', sizeFiles)
-  files.forEach((elem) => { event.reply('syncFiles', elem)})
+  event.reply('multipleFiles', sizeFiles)
+  files.forEach((item) => {event.reply('multipleFiles', item)})
   
   // Send files to logstash's folder
   sendFilesToLogstash(directory)

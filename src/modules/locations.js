@@ -22,7 +22,7 @@ const locations = {
     // General folder
     '__auto_pairing_app' : __auto_pairing_app,
     'logstashApp': path.join(__auto_pairing_app, '../src/utils/py/logstashApp.py'),
-    'task_processor': path.join(__auto_pairing_app, '../src/utils/py/task_processor.js'),
+    'task_processor': path.join(__auto_pairing_app, '../src/utils/js/task_processor.js'),
     'code_linux': path.join(__auto_pairing_app, '../src/utils/bash/code_linux'),
      // Loggers
      'logs_folder': path.join(__user_data, 'logs'),

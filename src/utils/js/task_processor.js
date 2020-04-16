@@ -9,11 +9,13 @@ parentPort.on('message', (task) => {
     script_win = task.script_win
     platform = task.platformUsed
     
-    let filename
-    task.file === undefined ? filename = task.filename : filename = task.file
+    let filename = "/"+task.filename
+    
+    if (filename.match(/\n/g))
+        filename = filename.replace(/\n/g, '')
 
-    process = setInterval(async() => {
-        const resStatus = await checkStatus(filename, task.logsDir, task.logstash_dir)
+    process = setInterval(() => {
+        const resStatus = checkStatus(filename, task.logsDir, task.logstash_dir)
         if (resStatus == 1)
             console.log("In progress")
         if (resStatus==2) 
@@ -26,33 +28,37 @@ parentPort.on('message', (task) => {
     
 })
 
-const checkStatus = async(filename,logsDir) => {
+const checkStatus = (filename,logsDir) => {
     let cmd
     if (platform == "win")
         cmd = "python "+script_win+" 6 "+logsDir+"/"+filename+" "+logsDir+"/status.log"
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/status.log | grep 'Done'"
+    try{
+        const res = execSync(cmd).toString()
+        if (res === '')
+            return ResStatusEmun['In progress']
+        return ResStatusEmun['Done']
 
-    const res = await execSync(cmd).toString()
-    if (res === '')
-        return ResStatusEmun['In progress']
-    return ResStatusEmun['Done']
+    }catch(e){
+        return ResStatusEmun['Done']
+
+    }
     
 }
 
 
-const getResult = async(filename,logsDir) => {
+const getResult = (filename,logsDir) => {
     let cmd
     if (platform == "win32" || platform == "win64")
         cmd = "python "+script_win+" 7 "+logsDir+"/"+filename+" "+logsDir+"/result.log "
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     
-    const res = await execSync(cmd).toString()
+    let res = execSync(cmd).toString()
     
     // Clear data
-    if (platform != "win")
-        res = reg.exec(/log - (.*)/g)[1]
-    
+    res = (/no error|error pattern 3/g).exec(res)[0].toString()
+
     parentPort.postMessage(res)
 }   
