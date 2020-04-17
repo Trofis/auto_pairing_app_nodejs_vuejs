@@ -50,11 +50,12 @@ const checkStatus = (filename,logsDir) => {
 
 const getResult = (filename,logsDir) => {
     let cmd
-    if (platform == "win32" || platform == "win64")
-        cmd = "python "+script_win+" 7 "+logsDir+"/"+filename+" "+logsDir+"/result.log "
+    if (platform == "win")
+        cmd = "python "+script_win+" 7 "+logsDir+filename+" "+logsDir+"/result.log "
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     
+    console.log(cmd)
     let res = execSync(cmd).toString()
     
     // Clear data

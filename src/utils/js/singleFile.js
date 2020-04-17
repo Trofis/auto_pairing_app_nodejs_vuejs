@@ -45,8 +45,8 @@ const sendFileToLogstash = async(file, event) => {
   
   if (global.os == "win"){
     filename = file.match(/(\\[^\\]*)$/g)[0]
-    cmd1 = "python "+loc.logstashApp+" 6 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/status.log"
-    cmd2 = "python "+loc.logstashApp+" 7 "+global.logsDir+'/log_modemD_'+log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
+    cmd1 = "python "+loc.logstashApp+" 6 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/status.log"
+    cmd2 = "python "+loc.logstashApp+" 7 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
   }
   else{
     filename = file.match(/(\/[^/]*)$/g)[0]
@@ -62,10 +62,10 @@ const sendFileToLogstash = async(file, event) => {
     event.reply('openDialogLocal', getResultLocal(cmd2,file))
   else{
     await setUpForLogstash(file)
-    return setInterval(() => {
+    process =setInterval(() => {
       if (checkResultLocal(cmd1)){
         clearInterval(process)
-        event.reply('openDialogLocal', getResultLocal(cmd2,file))
+        return event.reply('openDialogLocal', getResultLocal(cmd2,file))
       }
     }, 6000);
   }

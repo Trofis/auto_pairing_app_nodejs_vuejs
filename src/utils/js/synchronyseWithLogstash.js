@@ -26,7 +26,7 @@ const linux_synchronize = async(event) => {
   const isExecuted = execSync(isExecutedCmd).toString().match(/False/g) != null ? false : true
   // Launch Logstash is not processing
   if (!isExecuted){
-      global.logstash_process = spawn('sh', [global.logstash_dir+"/logstash-7.6.1/bin/logstash", "-f", global.logstash_dir+"/config/"+global.configName, "-w", 1])
+      global.logstash_process = spawn('sh', [global.logstash_dir+"/logstash-7.6.1/bin/logstash", "-f", global.logstash_dir+"/config/"+global.configName, "-w", 1]).pid
       controller_logstash()
   }
 
@@ -42,7 +42,7 @@ const linux_synchronize = async(event) => {
     // Find logstash
     const cmdFindLogstash = 'python '+loc.logstashApp+' 2 '+'C:\\Users\\'+user
     const data = await execSync(cmdFindLogstash)
-    data.toString('utf-8') == 'False\r\n'||data.toString('utf-8') == 'False' ? global.logstash_dir= false : global.logstash_dir= data.toString('utf-8')
+    data.toString('utf-8') == 'False\r\n'||data.toString('utf-8') == 'False' ? global.logstash_dir= false : global.logstash_dir= data.toString('utf-8').replace(/\n/g,'')
 
     if (global.logstash_dir == '') throw Error()
 
@@ -50,7 +50,6 @@ const linux_synchronize = async(event) => {
     // Check if logstash's already running
     const isExecutedCmd ='python '+loc.logstashApp+' 8 127.0.0.1 9600'
     const isExecuted = execSync(isExecutedCmd).toString().match(/False/g) != null ? false : true
-
     // Is logstash is runned from outside
     if (!isExecuted){
       global.logstash_process = execSync('python '+loc.logstashApp+' 1 '+global.logstash_dir+' '+global.configName)
@@ -62,3 +61,4 @@ const linux_synchronize = async(event) => {
 module.exports = {
   synchronize_with_logstash
 }
+

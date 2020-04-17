@@ -35,7 +35,9 @@ def exec_logstash(autoPairing_path, config):
     try:
         full_path = autoPairing_path.replace("\r\n","")+"\\logstash-7.6.1\\bin\\logstash.bat"
         config_path = autoPairing_path.replace("\r\n","")+"\\config\\"+config
-        subprocess.call([full_path, '-f', config_path, "-w", '1'])
+        pid = subprocess.Popen([full_path, "-f", config_path, "-w", 1]).pid
+        return pid
+        #subprocess.call([full_path, '-f', config_path, "-w", '1'])
     except subprocess.SubprocessError as error:
         print(error)
         raise 
@@ -168,6 +170,7 @@ def get_result(file, result_file):
     Error : /
     """
     file = str(file)
+    file = file.replace('/', '\/')
     with open(result_file) as f:
         result = re.findall(file+".*- (.*)", f.read())
         if len(result) > 0:
@@ -214,13 +217,16 @@ def setUpEnvironment():
 
 
 if sys.argv[1] == '1':
+    print( sys.argv[0])
+    print( sys.argv[1])
+    print( sys.argv[2])
     exec_logstash(sys.argv[2], sys.argv[3])
 elif sys.argv[1] == '2':
     print(find_AutoPairing(sys.argv[2]))
 elif sys.argv[1] == '3':
     print(find_Files(sys.argv[2]))
-elif sys.argv[1] == '4':
-    code_linux(sys.argv[2])
+#elif sys.argv[1] == '4':
+#    code_linux(sys.argv[2])
 elif sys.argv[1] == '5':
     print(code_windows(sys.argv[2]))
 elif sys.argv[1] == '6':
@@ -231,6 +237,8 @@ elif sys.argv[1] == '8':
     print(isRunning(sys.argv[2], sys.argv[3]))
 elif sys.argv[1] == '9':
     setUpEnvironment()
+
+#print(get_result('C:/Users/thoma/Documents/CONTI_137_81_LOG.tar','C:/logs_modem_files/result.log' ))
 
 sys.stdout.flush()
 
