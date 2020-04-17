@@ -153,6 +153,7 @@ def check_status(file, status_file):
     Error : /
     """
     file = str(file)
+    file = file.replace('/', '\/')
     with open(status_file) as f:
         result = re.findall(file+".*- Done", f.read())
         if len(result) > 0:
@@ -217,9 +218,6 @@ def setUpEnvironment():
 
 
 if sys.argv[1] == '1':
-    print( sys.argv[0])
-    print( sys.argv[1])
-    print( sys.argv[2])
     exec_logstash(sys.argv[2], sys.argv[3])
 elif sys.argv[1] == '2':
     print(find_AutoPairing(sys.argv[2]))

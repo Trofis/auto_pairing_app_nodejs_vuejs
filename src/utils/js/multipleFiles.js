@@ -64,8 +64,6 @@ const _useWorkerTreatFiles = (files,directory, event) => {
     else
       filename = file
     pool.runTask({filename, logsDir:global.logsDir, logstash_dir:global.logstash_dir, script_win:loc.logstashApp, platformUsed:global.os}, (err, res) => {
-      console.log('res',res)
-      console.log('err',err)
       if (err)
         return event.reply('multipleFilesResult', [file, err])
       const item = [file, res]

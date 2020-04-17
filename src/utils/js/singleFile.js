@@ -27,9 +27,9 @@ const setUpForLogstash = async(file) => {
   await exec('python '+loc.logstashApp+' 9')
 
   if (global.os == "win"){
-    exec('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
+    exec('mkdir '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:\-() ]/g,'_'))
 
-    exec('xcopy '+file+' '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-'))
+    exec('xcopy "'+file+'" '+global.logsDir.replace(/\//g,'\\')+'\\log_modemD_'+global.log_name_dir.replace(/[\\:\-() ]/g,'_'))
   }
   else{
     exec('mkdir '+global.logsDir+'/log_modemD_'+global.log_name_dir)
@@ -45,8 +45,11 @@ const sendFileToLogstash = async(file, event) => {
   
   if (global.os == "win"){
     filename = file.match(/(\\[^\\]*)$/g)[0]
-    cmd1 = "python "+loc.logstashApp+" 6 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/status.log"
-    cmd2 = "python "+loc.logstashApp+" 7 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:]/g,'-')+" "+global.logsDir+"/result.log "
+    cmd1 = "python "+loc.logstashApp+" 6 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:\-() ]/g,'_')+" "+global.logsDir+"/status.log"
+    cmd2 = "python "+loc.logstashApp+" 7 "+global.logsDir+'/log_modemD_'+global.log_name_dir.replace(/[\\:\-() ]/g,'_')+" "+global.logsDir+"/result.log "
+    console.log(cmd1)
+    console.log(cmd2)
+
   }
   else{
     filename = file.match(/(\/[^/]*)$/g)[0]
@@ -62,10 +65,11 @@ const sendFileToLogstash = async(file, event) => {
     event.reply('openDialogLocal', getResultLocal(cmd2,file))
   else{
     await setUpForLogstash(file)
-    process =setInterval(() => {
+
+    interval =setInterval(() => {
       if (checkResultLocal(cmd1)){
-        clearInterval(process)
-        return event.reply('openDialogLocal', getResultLocal(cmd2,file))
+        event.reply('openDialogLocal', getResultLocal(cmd2,file))
+        clearInterval(interval)
       }
     }, 6000);
   }

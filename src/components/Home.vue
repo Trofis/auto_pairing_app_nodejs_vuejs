@@ -113,11 +113,18 @@ export default {
       {
         this.result = 'A csv has been created in the directory'
         this.finalRes = false
+        this.actualUpdateSize = 0
+        this.size = 0
+        this.loading = []
+
+
       }
     },
     sheet(val) {
       if (this.message == 'Logstash not found, the app will close, please make sure you have the autoPairing folder in your computer' && !val)
         remote.getCurrentWindow().close()
+      if (!this.finalRes)
+        this.finalRes = true
     }
   },
   methods: {

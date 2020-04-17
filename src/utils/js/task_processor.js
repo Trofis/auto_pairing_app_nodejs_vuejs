@@ -55,7 +55,6 @@ const getResult = (filename,logsDir) => {
     else
         cmd = "grep "+logsDir+filename+" "+logsDir+"/result.log "
     
-    console.log(cmd)
     let res = execSync(cmd).toString()
     
     // Clear data
