@@ -1,0 +1,830 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f445f7eaae9, pid=142392, tid=0x00007f445fc53400
+#
+# JRE version: OpenJDK Runtime Environment (8.0_242-b08) (build 1.8.0_242-b08)
+# Java VM: OpenJDK 64-Bit Server VM (25.242-b08 mixed mode linux-amd64 compressed oops)
+# Problematic frame:
+# V  [libjvm.so+0x8c7ae9]
+#
+# Core dump written. Default location: /home/trofis/Documents/auto-pairing-app/server/core or core.142392
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread is native thread
+
+siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000110
+
+Registers:
+RAX=0x0000000000000000, RBX=0x00007f445fc53380, RCX=0x00007f445fc5ea67, RDX=0x00007f445fc53400
+RSP=0x00007ffc5e85c330, RBP=0x00007ffc5e85c3f0, RSI=0x00007ffc5e85c530, RDI=0x0000000000000001
+R8 =0x0000000000000000, R9 =0x00007f445eddc700, R10=0x0000000000000000, R11=0x0000000000000246
+R12=0x00007ffc5e85c530, R13=0x00007f445eddc9d0, R14=0x0000000000000000, R15=0x00007f445eddc700
+RIP=0x00007f445f7eaae9, EFLAGS=0x0000000000010246, CSGSFS=0x002b000000000033, ERR=0x0000000000000004
+  TRAPNO=0x000000000000000e
+
+Top of Stack: (sp=0x00007ffc5e85c330)
+0x00007ffc5e85c330:   00007ffc5e850000 00007ffc5e85c400
+0x00007ffc5e85c340:   00007ffc5e85ca18 0000000000000000
+0x00007ffc5e85c350:   ffffffffffffffff 0000000000000000
+0x00007ffc5e85c360:   0000000000000000 0000000000000002
+0x00007ffc5e85c370:   00007ffc5e85c5b0 00007f445fe51520
+0x00007ffc5e85c380:   0000000000000000 00007f445fe56000
+0x00007ffc5e85c390:   0000000000000000 0000000000000000
+0x00007ffc5e85c3a0:   0000000000000000 00007ffc5e85c590
+0x00007ffc5e85c3b0:   0000000100000001 00007f445fe55300
+0x00007ffc5e85c3c0:   00007f445fcaa330 00000000000000ca
+0x00007ffc5e85c3d0:   0000000000022c44 00007f445eddc9d0
+0x00007ffc5e85c3e0:   0000000000100000 00007f445eddc700
+0x00007ffc5e85c3f0:   00007ffc5e85cb58 00007f445fcd0d70
+0x00007ffc5e85c400:   0000000000000007 0000000000000000
+0x00007ffc5e85c410:   0000000000000000 00007ffc00000002
+0x00007ffc5e85c420:   0000000000000000 0000000000000000
+0x00007ffc5e85c430:   00007f445eddc700 0000000000000000
+0x00007ffc5e85c440:   0000000000000246 0000000000022c44
+0x00007ffc5e85c450:   00007f445eddc9d0 0000000000100000
+0x00007ffc5e85c460:   00007f445eddc700 00007f445eddc9d0
+0x00007ffc5e85c470:   0000000000000000 00007ffc5e85cb58
+0x00007ffc5e85c480:   00000000000000ca 0000000000022c44
+0x00007ffc5e85c490:   00000000000000ca 00007f445fc5ea67
+0x00007ffc5e85c4a0:   00007ffc5e85cab0 00007f445fc5ea65
+0x00007ffc5e85c4b0:   0000000000000246 002b000000000033
+0x00007ffc5e85c4c0:   0000000000000000 0000000000000000
+0x00007ffc5e85c4d0:   0000000000000000 0000000000000000
+0x00007ffc5e85c4e0:   00007ffc5e85c5c0 0000000000000018
+0x00007ffc5e85c4f0:   0000000000000001 0000000000000000
+0x00007ffc5e85c500:   0000000000000000 0000000000000000
+0x00007ffc5e85c510:   ffffffffffffffff 0000000200000000
+0x00007ffc5e85c520:   0000000000000000 0000000000000000 
+
+Instructions: (pc=0x00007f445f7eaae9)
+0x00007f445f7eaac9:   95 48 ff ff ff ff 15 74 db 40 00 44 8b 30 48 89
+0x00007f445f7eaad9:   c3 48 8d 05 67 23 42 00 8b 38 ff 15 a7 e1 40 00
+0x00007f445f7eaae9:   4c 8b a8 10 01 00 00 41 8b 85 a8 00 00 00 83 f8
+0x00007f445f7eaaf9:   01 74 1c 44 89 33 48 81 c4 98 00 00 00 5b 41 5c 
+
+Register to memory mapping:
+
+RAX=0x0000000000000000 is an unknown value
+RBX=0x00007f445fc53380 is an unknown value
+RCX=0x00007f445fc5ea67: <offset 0xaa67> in /usr/lib/libpthread.so.0 at 0x00007f445fc54000
+RDX=0x00007f445fc53400 is an unknown value
+RSP=0x00007ffc5e85c330 is an unknown value
+RBP=0x00007ffc5e85c3f0 is an unknown value
+RSI=0x00007ffc5e85c530 is an unknown value
+RDI=0x0000000000000001 is an unknown value
+R8 =0x0000000000000000 is an unknown value
+R9 =0x00007f445eddc700 is pointing into the stack for thread: 0x00007f445800d000
+R10=0x0000000000000000 is an unknown value
+R11=0x0000000000000246 is an unknown value
+R12=0x00007ffc5e85c530 is an unknown value
+R13=0x00007f445eddc9d0 is pointing into the stack for thread: 0x00007f445800d000
+R14=0x0000000000000000 is an unknown value
+R15=0x00007f445eddc700 is pointing into the stack for thread: 0x00007f445800d000
+
+
+Stack: [0x00007ffc5e765000,0x00007ffc5e865000],  sp=0x00007ffc5e85c330,  free space=988k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0x8c7ae9]
+C  [libc.so.6+0x3bd70]
+
+
+---------------  P R O C E S S  ---------------
+
+VM state:not at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread: None
+
+heap address: 0x00000000c0000000, size: 1024 MB, Compressed Oops mode: 32-bit
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 3
+Compressed class space size: 1073741824 Address: 0x0000000100000000
+
+Heap:
+ par new generation   total 314560K, used 209474K [0x00000000c0000000, 0x00000000d5550000, 0x00000000d5550000)
+  eden space 279616K,  62% used [0x00000000c0000000, 0x00000000caa70908, 0x00000000d1110000)
+  from space 34944K,  99% used [0x00000000d3330000, 0x00000000d554fff0, 0x00000000d5550000)
+  to   space 34944K,   0% used [0x00000000d1110000, 0x00000000d1110000, 0x00000000d3330000)
+ concurrent mark-sweep generation total 699072K, used 2110K [0x00000000d5550000, 0x0000000100000000, 0x0000000100000000)
+ Metaspace       used 42230K, capacity 45344K, committed 45544K, reserved 1087488K
+  class space    used 7140K, capacity 8023K, committed 8044K, reserved 1048576K
+
+Card table byte_map: [0x00007f445ded0000,0x00007f445e0d1000] byte_map_base: 0x00007f445d8d0000
+
+Marking Bits: (CMSBitMap*) 0x00007f4458096098
+ Bits: [0x00007f445cac7000, 0x00007f445d571c00)
+
+Mod Union Table: (CMSBitMap*) 0x00007f4458096158
+ Bits: [0x00007f445ca9c000, 0x00007f445cac6ab0)
+
+Polling page: 0x00007f445fecd000
+
+CodeCache: size=245760Kb used=20468Kb max_used=20468Kb free=225291Kb
+ bounds [0x00007f4449000000, 0x00007f444a410000, 0x00007f4458000000]
+ total_blobs=6563 nmethods=5922 adapters=554
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 9,838 Thread 0x00007f4458137800 nmethod 6373 0x00007f444a3f57d0 code [0x00007f444a3f5980, 0x00007f444a3f6208]
+Event: 9,840 Thread 0x00007f4458137800 6374       3       org.jruby.ir.targets.Bootstrap::bytelist (86 bytes)
+Event: 9,845 Thread 0x00007f4458137800 nmethod 6374 0x00007f444a3f3a50 code [0x00007f444a3f3d00, 0x00007f444a3f4f48]
+Event: 9,846 Thread 0x00007f4458137800 6375       3       sun.security.jca.Providers::getProviderList (14 bytes)
+Event: 9,846 Thread 0x00007f4458137800 nmethod 6375 0x00007f444a3f3390 code [0x00007f444a3f3520, 0x00007f444a3f3948]
+Event: 9,846 Thread 0x00007f4458137800 6376       3       sun.security.jca.Providers::getThreadProviderList (18 bytes)
+Event: 9,846 Thread 0x00007f4458137800 nmethod 6376 0x00007f444a3f2e50 code [0x00007f444a3f2fc0, 0x00007f444a3f32e8]
+Event: 9,850 Thread 0x00007f4458137800 6377       3       java.security.Provider::ensureLegacyParsed (123 bytes)
+Event: 9,851 Thread 0x00007f4458137800 nmethod 6377 0x00007f444a406450 code [0x00007f444a4066a0, 0x00007f444a407448]
+Event: 9,854 Thread 0x00007f4458137800 6378  s    3       java.security.Provider::getService (92 bytes)
+
+GC Heap History (2 events):
+Event: 6,461 GC heap before
+{Heap before GC invocations=0 (full 1):
+ par new generation   total 314560K, used 279616K [0x00000000c0000000, 0x00000000d5550000, 0x00000000d5550000)
+  eden space 279616K, 100% used [0x00000000c0000000, 0x00000000d1110000, 0x00000000d1110000)
+  from space 34944K,   0% used [0x00000000d1110000, 0x00000000d1110000, 0x00000000d3330000)
+  to   space 34944K,   0% used [0x00000000d3330000, 0x00000000d3330000, 0x00000000d5550000)
+ concurrent mark-sweep generation total 699072K, used 0K [0x00000000d5550000, 0x0000000100000000, 0x0000000100000000)
+ Metaspace       used 38920K, capacity 40278K, committed 40552K, reserved 1083392K
+  class space    used 6752K, capacity 7092K, committed 7148K, reserved 1048576K
+Event: 6,548 GC heap after
+Heap after GC invocations=1 (full 1):
+ par new generation   total 314560K, used 34943K [0x00000000c0000000, 0x00000000d5550000, 0x00000000d5550000)
+  eden space 279616K,   0% used [0x00000000c0000000, 0x00000000c0000000, 0x00000000d1110000)
+  from space 34944K,  99% used [0x00000000d3330000, 0x00000000d554fff0, 0x00000000d5550000)
+  to   space 34944K,   0% used [0x00000000d1110000, 0x00000000d1110000, 0x00000000d3330000)
+ concurrent mark-sweep generation total 699072K, used 2110K [0x00000000d5550000, 0x0000000100000000, 0x0000000100000000)
+ Metaspace       used 38920K, capacity 40278K, committed 40552K, reserved 1083392K
+  class space    used 6752K, capacity 7092K, committed 7148K, reserved 1048576K
+}
+
+Deoptimization events (10 events):
+Event: 9,251 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f44495c8088 method=org.jruby.util.collections.ConcurrentWeakHashMap$HashIterator.hasNext()Z @ 17
+Event: 9,290 Thread 0x00007f445800d000 Uncommon trap: reason=unhandled action=reinterpret pc=0x00007f444a2d29f8 method=java.lang.invoke.CallSite.<init>(Ljava/lang/invoke/MethodHandle;)V @ 11
+Event: 9,404 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f444a03cb94 method=java.util.regex.Pattern$Slice.match(Ljava/util/regex/Matcher;ILjava/lang/CharSequence;)Z @ 29
+Event: 9,459 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f4449f0d2f0 method=java.util.HashMap$HashIterator.<init>(Ljava/util/HashMap;)V @ 45
+Event: 9,459 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f4449eedde4 method=java.util.HashMap$HashIterator.<init>(Ljava/util/HashMap;)V @ 45
+Event: 9,528 Thread 0x00007f445800d000 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007f44494909f0 method=java.util.concurrent.ConcurrentHashMap.putVal(Ljava/lang/Object;Ljava/lang/Object;Z)Ljava/lang/Object; @ 192
+Event: 9,529 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f444980d29c method=org.jruby.util.ByteList.equal(Lorg/jruby/util/ByteList;)Z @ 29
+Event: 9,720 Thread 0x00007f445800d000 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007f444a30926c method=org.jruby.lexer.yacc.RubyLexer.yylex()I @ 1400
+Event: 9,794 Thread 0x00007f445800d000 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007f444a2b40b0 method=org.jruby.ir.interpreter.InterpreterEngine.processCall(Lorg/jruby/runtime/ThreadContext;Lorg/jruby/ir/instructions/Instr;Lorg/jruby/ir/Operation;Lorg/jruby/runtime/Dynamic
+Event: 9,796 Thread 0x00007f445800d000 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007f444a2b40b0 method=org.jruby.ir.interpreter.InterpreterEngine.processCall(Lorg/jruby/runtime/ThreadContext;Lorg/jruby/ir/instructions/Instr;Lorg/jruby/ir/Operation;Lorg/jruby/runtime/Dynamic
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 1,769 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: fstat> (0x00000000c3f78888) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 1,827 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: stat64> (0x00000000c418f0e8) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 1,827 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: fstat64> (0x00000000c4190c28) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 1,827 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: lstat64> (0x00000000c4192388) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 6,598 Thread 0x00007f44580fb800 Implicit null exception at 0x00007f44497ab78b to 0x00007f44497ab83d
+Event: 7,398 Thread 0x00007f445800d000 Implicit null exception at 0x00007f4449b2ce13 to 0x00007f4449b2d1ed
+Event: 7,524 Thread 0x00007f445800d000 Implicit null exception at 0x00007f44497b090e to 0x00007f44497b25a1
+Event: 8,042 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: kqueue> (0x00000000c57a9068) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 8,042 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: kevent> (0x00000000c57ab9f0) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+Event: 8,042 Thread 0x00007f445800d000 Exception <a 'java/lang/UnsatisfiedLinkError': /usr/lib/libc.so.6: undefined symbol: kevent> (0x00000000c57ae810) thrown at [/build/java8-openjdk/src/jdk8u-jdk8u242-b08/hotspot/src/share/vm/prims/jni.cpp, line 737]
+
+Events (10 events):
+Event: 9,853 loading class org/jruby/runtime/builtin/IRubyObject
+Event: 9,853 loading class org/jruby/runtime/builtin/IRubyObject done
+Event: 9,853 loading class org/jruby/runtime/ThreadContext
+Event: 9,853 loading class org/jruby/runtime/ThreadContext done
+Event: 9,853 loading class org/jruby/runtime/ThreadContext
+Event: 9,853 loading class org/jruby/runtime/ThreadContext done
+Event: 9,854 loading class org/jruby/runtime/builtin/IRubyObject
+Event: 9,854 loading class org/jruby/runtime/builtin/IRubyObject done
+Event: 9,854 loading class org/jruby/runtime/ThreadContext
+Event: 9,854 loading class org/jruby/runtime/ThreadContext done
+
+
+Dynamic libraries:
+c0000000-1007db000 rw-p 00000000 00:00 0 
+1007db000-140000000 ---p 00000000 00:00 0 
+55ded2710000-55ded2711000 r--p 00000000 103:04 662552                    /usr/lib/jvm/java-8-openjdk/jre/bin/java
+55ded2711000-55ded2712000 r-xp 00001000 103:04 662552                    /usr/lib/jvm/java-8-openjdk/jre/bin/java
+55ded2712000-55ded2713000 r--p 00002000 103:04 662552                    /usr/lib/jvm/java-8-openjdk/jre/bin/java
+55ded2713000-55ded2714000 r--p 00002000 103:04 662552                    /usr/lib/jvm/java-8-openjdk/jre/bin/java
+55ded2714000-55ded2715000 rw-p 00003000 103:04 662552                    /usr/lib/jvm/java-8-openjdk/jre/bin/java
+55ded3d64000-55ded3de6000 rw-p 00000000 00:00 0                          [heap]
+7f43e8000000-7f43e8021000 rw-p 00000000 00:00 0 
+7f43e8021000-7f43ec000000 ---p 00000000 00:00 0 
+7f43ed7c6000-7f43ed886000 rw-p 00000000 00:00 0 
+7f43ed886000-7f43ed9c6000 ---p 00000000 00:00 0 
+7f43ed9c6000-7f43edbc6000 rw-p 00000000 00:00 0 
+7f43edbc6000-7f43eddbe000 rw-p 00000000 00:00 0 
+7f43eddbe000-7f43eddc6000 ---p 00000000 00:00 0 
+7f43eddc6000-7f43edfc6000 rw-p 00000000 00:00 0 
+7f43edfc6000-7f43ee1b8000 rw-p 00000000 00:00 0 
+7f43ee1b8000-7f43ee1c6000 ---p 00000000 00:00 0 
+7f43ee1c6000-7f43ee3bf000 rw-p 00000000 00:00 0 
+7f43ee3bf000-7f43ee3c6000 ---p 00000000 00:00 0 
+7f43ee3c6000-7f43ee5c6000 rw-p 00000000 00:00 0 
+7f43ee5ff000-7f43ee7fb000 rw-p 00000000 00:00 0 
+7f43ee7fb000-7f43ee7ff000 ---p 00000000 00:00 0 
+7f43ee7ff000-7f43f0000000 rw-p 00000000 00:00 0 
+7f43f0000000-7f43f102d000 rw-p 00000000 00:00 0 
+7f43f102d000-7f43f4000000 ---p 00000000 00:00 0 
+7f43f4000000-7f43f4021000 rw-p 00000000 00:00 0 
+7f43f4021000-7f43f8000000 ---p 00000000 00:00 0 
+7f43f8000000-7f43f9169000 rw-p 00000000 00:00 0 
+7f43f9169000-7f43fc000000 ---p 00000000 00:00 0 
+7f43fc000000-7f43fda1f000 rw-p 00000000 00:00 0 
+7f43fda1f000-7f4400000000 ---p 00000000 00:00 0 
+7f4400000000-7f4400021000 rw-p 00000000 00:00 0 
+7f4400021000-7f4404000000 ---p 00000000 00:00 0 
+7f4404000000-7f4405c39000 rw-p 00000000 00:00 0 
+7f4405c39000-7f4408000000 ---p 00000000 00:00 0 
+7f4408000000-7f4408021000 rw-p 00000000 00:00 0 
+7f4408021000-7f440c000000 ---p 00000000 00:00 0 
+7f440c000000-7f440c021000 rw-p 00000000 00:00 0 
+7f440c021000-7f4410000000 ---p 00000000 00:00 0 
+7f4410000000-7f4410021000 rw-p 00000000 00:00 0 
+7f4410021000-7f4414000000 ---p 00000000 00:00 0 
+7f4414000000-7f4414021000 rw-p 00000000 00:00 0 
+7f4414021000-7f4418000000 ---p 00000000 00:00 0 
+7f4418000000-7f4418021000 rw-p 00000000 00:00 0 
+7f4418021000-7f441c000000 ---p 00000000 00:00 0 
+7f441c000000-7f441c021000 rw-p 00000000 00:00 0 
+7f441c021000-7f4420000000 ---p 00000000 00:00 0 
+7f4420000000-7f4420021000 rw-p 00000000 00:00 0 
+7f4420021000-7f4424000000 ---p 00000000 00:00 0 
+7f4424000000-7f4424021000 rw-p 00000000 00:00 0 
+7f4424021000-7f4428000000 ---p 00000000 00:00 0 
+7f44281ac000-7f44283ac000 rw-p 00000000 00:00 0 
+7f44283ac000-7f44285ac000 rw-p 00000000 00:00 0 
+7f44285ac000-7f44287ac000 rw-p 00000000 00:00 0 
+7f44287ac000-7f44287ad000 r--p 00000000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287ad000-7f44287b3000 r-xp 00001000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287b3000-7f44287b5000 r--p 00007000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287b5000-7f44287b6000 ---p 00009000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287b6000-7f44287b7000 r--p 00009000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287b7000-7f44287b8000 rw-p 0000a000 103:04 2368466                   /usr/lib/libcrypt-2.31.so
+7f44287b8000-7f44287e6000 rw-p 00000000 00:00 0 
+7f4428806000-7f4428808000 r--s 00016000 103:04 662567                    /usr/lib/jvm/java-8-openjdk/jre/lib/jce.jar
+7f4428808000-7f442881b000 r--s 00346000 103:04 662573                    /usr/lib/jvm/java-8-openjdk/jre/lib/resources.jar
+7f442881b000-7f4428a1b000 rw-p 00000000 00:00 0 
+7f4428a1b000-7f4428a2d000 r-xp 00000000 00:2e 268                        /tmp/jffi6424401302922479956.so (deleted)
+7f4428a2d000-7f4428c2c000 ---p 00012000 00:2e 268                        /tmp/jffi6424401302922479956.so (deleted)
+7f4428c2c000-7f4428c2d000 rw-p 00011000 00:2e 268                        /tmp/jffi6424401302922479956.so (deleted)
+7f4428c2d000-7f4428e2d000 rw-p 00000000 00:00 0 
+7f4428e2d000-7f442902d000 rw-p 00000000 00:00 0 
+7f442902d000-7f442902e000 r--p 00000000 103:04 662587                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjaas_unix.so
+7f442902e000-7f442902f000 r-xp 00001000 103:04 662587                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjaas_unix.so
+7f442902f000-7f4429030000 r--p 00002000 103:04 662587                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjaas_unix.so
+7f4429030000-7f4429031000 r--p 00002000 103:04 662587                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjaas_unix.so
+7f4429031000-7f4429032000 rw-p 00003000 103:04 662587                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjaas_unix.so
+7f4429032000-7f4429232000 rw-p 00000000 00:00 0 
+7f4429232000-7f442924d000 r--s 001d6000 103:04 662623                    /usr/lib/jvm/java-8-openjdk/jre/lib/ext/nashorn.jar
+7f442924d000-7f4429252000 r--s 000a3000 103:04 662569                    /usr/lib/jvm/java-8-openjdk/jre/lib/jsse.jar
+7f4429252000-7f4429256000 r--p 00000000 103:04 662598                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libmanagement.so
+7f4429256000-7f4429259000 r-xp 00004000 103:04 662598                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libmanagement.so
+7f4429259000-7f442925b000 r--p 00007000 103:04 662598                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libmanagement.so
+7f442925b000-7f442925c000 r--p 00008000 103:04 662598                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libmanagement.so
+7f442925c000-7f442925d000 rw-p 00009000 103:04 662598                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libmanagement.so
+7f442925d000-7f442925f000 r--s 00009000 103:04 1582098                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/slf4j-api-1.7.25.jar
+7f442925f000-7f4429262000 r--s 0001e000 103:04 1582092                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/reflections-0.9.11.jar
+7f4429262000-7f4429267000 r--s 00038000 103:04 1582125                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.text-3.5.101.jar
+7f4429267000-7f442927a000 r--s 0013a000 103:04 1582123                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.osgi-3.7.1.jar
+7f442927a000-7f44292a7000 r--s 00522000 103:04 1582110                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.jdt.core-3.10.0.jar
+7f44292a7000-7f44292ab000 r--s 00029000 103:04 1582120                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.equinox.registry-3.5.101.jar
+7f44292ab000-7f44292ae000 r--s 00019000 103:04 1582093                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.equinox.preferences-3.4.1.jar
+7f44292ae000-7f44292b0000 r--s 00018000 103:04 1582122                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.equinox.common-3.6.0.jar
+7f44292b0000-7f44292b2000 r--s 00013000 103:04 1582108                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.equinox.app-1.3.100.jar
+7f44292b2000-7f44292b4000 r--s 00010000 103:04 1582099                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.runtime-3.7.0.jar
+7f44292b4000-7f44292bf000 r--s 000bb000 103:04 1582106                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.resources-3.7.100.jar
+7f44292bf000-7f44292c2000 r--s 00014000 103:04 1582121                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.jobs-3.5.100.jar
+7f44292c2000-7f44292c4000 r--s 0000b000 103:04 1582096                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.filesystem-1.3.100.jar
+7f44292c4000-7f44292c7000 r--s 00013000 103:04 1582103                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.expressions-3.4.300.jar
+7f44292c7000-7f44292cc000 r--p 00000000 103:04 662600                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnet.so
+7f44292cc000-7f44292db000 r-xp 00005000 103:04 662600                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnet.so
+7f44292db000-7f44292df000 r--p 00014000 103:04 662600                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnet.so
+7f44292df000-7f44292e0000 r--p 00017000 103:04 662600                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnet.so
+7f44292e0000-7f44292e1000 rw-p 00018000 103:04 662600                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnet.so
+7f44292e1000-7f4429410000 r--s 017af000 103:04 1582114                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jruby-complete-9.2.9.0.jar
+7f4429410000-7f4429411000 ---p 00000000 00:00 0 
+7f4429411000-7f4429511000 rw-p 00000000 00:00 0 
+7f4429511000-7f4429514000 ---p 00000000 00:00 0 
+7f4429514000-7f4429612000 rw-p 00000000 00:00 0 
+7f4429612000-7f4429613000 ---p 00000000 00:00 0 
+7f4429613000-7f4429616000 ---p 00000000 00:00 0 
+7f4429616000-7f4429713000 rw-p 00000000 00:00 0 
+7f4429713000-7f4429714000 ---p 00000000 00:00 0 
+7f4429714000-7f4429717000 ---p 00000000 00:00 0 
+7f4429717000-7f4429814000 rw-p 00000000 00:00 0 
+7f4429814000-7f4429815000 ---p 00000000 00:00 0 
+7f4429815000-7f4429818000 ---p 00000000 00:00 0 
+7f4429818000-7f4429915000 rw-p 00000000 00:00 0 
+7f4429915000-7f4429916000 ---p 00000000 00:00 0 
+7f4429916000-7f4429919000 ---p 00000000 00:00 0 
+7f4429919000-7f4429a16000 rw-p 00000000 00:00 0 
+7f4429a16000-7f4429a19000 ---p 00000000 00:00 0 
+7f4429a19000-7f4429b17000 rw-p 00000000 00:00 0 
+7f4429b17000-7f4429b1a000 ---p 00000000 00:00 0 
+7f4429b1a000-7f4429c18000 rw-p 00000000 00:00 0 
+7f4429c18000-7f4429eff000 r--p 00000000 103:04 2374792                   /usr/lib/locale/locale-archive
+7f4429eff000-7f4429f02000 ---p 00000000 00:00 0 
+7f4429f02000-7f442c000000 rw-p 00000000 00:00 0 
+7f442c000000-7f442c021000 rw-p 00000000 00:00 0 
+7f442c021000-7f4430000000 ---p 00000000 00:00 0 
+7f4430000000-7f4430021000 rw-p 00000000 00:00 0 
+7f4430021000-7f4434000000 ---p 00000000 00:00 0 
+7f4434000000-7f4434021000 rw-p 00000000 00:00 0 
+7f4434021000-7f4438000000 ---p 00000000 00:00 0 
+7f4438000000-7f4438044000 rw-p 00000000 00:00 0 
+7f4438044000-7f443c000000 ---p 00000000 00:00 0 
+7f443c000000-7f443c021000 rw-p 00000000 00:00 0 
+7f443c021000-7f4440000000 ---p 00000000 00:00 0 
+7f4440000000-7f4440021000 rw-p 00000000 00:00 0 
+7f4440021000-7f4444000000 ---p 00000000 00:00 0 
+7f4444000000-7f4444021000 rw-p 00000000 00:00 0 
+7f4444021000-7f4448000000 ---p 00000000 00:00 0 
+7f4448000000-7f4448003000 r--s 00014000 103:04 1582115                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.contenttype-3.4.100.jar
+7f4448003000-7f4448007000 r--s 00017000 103:04 1582102                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/org.eclipse.core.commands-3.6.0.jar
+7f4448007000-7f444800e000 r--p 00000000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f444800e000-7f4448016000 r-xp 00007000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f4448016000-7f4448019000 r--p 0000f000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f4448019000-7f444801a000 ---p 00012000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f444801a000-7f444801b000 r--p 00012000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f444801b000-7f444801c000 rw-p 00013000 103:04 662601                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libnio.so
+7f444801c000-7f4448028000 r--s 00088000 103:04 1582107                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/logstash-core.jar
+7f4448028000-7f4448029000 r--s 00005000 103:04 1582090                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-slf4j-impl-2.12.1.jar
+7f4448029000-7f444804a000 r--s 00178000 103:04 1582091                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-core-2.12.1.jar
+7f444804a000-7f4448050000 r--s 0003e000 103:04 1582100                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-api-2.12.1.jar
+7f4448050000-7f4448053000 r--s 00006000 103:04 1582094                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jsr305-1.3.9.jar
+7f4448053000-7f4448087000 rw-p 00000000 00:00 0 
+7f4448087000-7f4448092000 r--s 000b5000 103:04 1582124                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/javassist-3.26.0-GA.jar
+7f4448092000-7f444809e000 r--s 000c9000 103:04 1582116                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/janino-3.1.0.jar
+7f444809e000-7f44480a0000 r--s 0000b000 103:04 1582101                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-dataformat-cbor-2.9.10.jar
+7f44480a0000-7f44480b3000 r--s 00137000 103:04 1582117                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-databind-2.9.10.1.jar
+7f44480b3000-7f44480b7000 r--s 0004c000 103:04 1582105                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-core-2.9.10.jar
+7f44480b7000-7f44480ba000 r--s 0000e000 103:04 1582113                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-annotations-2.9.10.jar
+7f44480ba000-7f44480bc000 r--s 00001000 103:04 1582112                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/j2objc-annotations-1.1.jar
+7f44480bc000-7f44480ec000 r--s 00245000 103:04 1582097                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/guava-22.0.jar
+7f44480ec000-7f44480f1000 r--s 0003c000 103:04 1582104                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/gradle-license-report-0.7.1.jar
+7f44480f1000-7f44480f8000 r--s 0004e000 103:04 1582109                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/commons-codec-1.13.jar
+7f44480f8000-7f44480fb000 ---p 00000000 00:00 0 
+7f44480fb000-7f44481f9000 rw-p 00000000 00:00 0 
+7f44481f9000-7f44481fa000 ---p 00000000 00:00 0 
+7f44481fa000-7f4448348000 rw-p 00000000 00:00 0 
+7f4448348000-7f4448518000 r--s 03c68000 103:04 662574                    /usr/lib/jvm/java-8-openjdk/jre/lib/rt.jar
+7f4448518000-7f4448e11000 rw-p 00000000 00:00 0 
+7f4448e11000-7f4448eff000 rw-p 00000000 00:00 0 
+7f4448eff000-7f4448f00000 ---p 00000000 00:00 0 
+7f4448f00000-7f4449000000 rw-p 00000000 00:00 0 
+7f4449000000-7f444a420000 rwxp 00000000 00:00 0 
+7f444a420000-7f4458000000 ---p 00000000 00:00 0 
+7f4458000000-7f445973c000 rw-p 00000000 00:00 0 
+7f445973c000-7f445c000000 ---p 00000000 00:00 0 
+7f445c000000-7f445c004000 r--s 0002a000 103:04 1582111                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/google-java-format-1.1.jar
+7f445c004000-7f445c005000 r--s 00002000 103:04 1582095                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/error_prone_annotations-2.0.18.jar
+7f445c005000-7f445c89a000 rw-p 00000000 00:00 0 
+7f445c89a000-7f445c89b000 ---p 00000000 00:00 0 
+7f445c89b000-7f445c99b000 rw-p 00000000 00:00 0 
+7f445c99b000-7f445c99c000 ---p 00000000 00:00 0 
+7f445c99c000-7f445e0d0000 rw-p 00000000 00:00 0 
+7f445e0d0000-7f445e0d1000 rw-p 00000000 00:00 0 
+7f445e0d1000-7f445e0d2000 ---p 00000000 00:00 0 
+7f445e0d2000-7f445e1d2000 rw-p 00000000 00:00 0 
+7f445e1d2000-7f445e1d3000 ---p 00000000 00:00 0 
+7f445e1d3000-7f445e2d3000 rw-p 00000000 00:00 0 
+7f445e2d3000-7f445e2d4000 ---p 00000000 00:00 0 
+7f445e2d4000-7f445e3d4000 rw-p 00000000 00:00 0 
+7f445e3d4000-7f445e3d5000 ---p 00000000 00:00 0 
+7f445e3d5000-7f445e4d5000 rw-p 00000000 00:00 0 
+7f445e4d5000-7f445e4d6000 ---p 00000000 00:00 0 
+7f445e4d6000-7f445e5d6000 rw-p 00000000 00:00 0 
+7f445e5d6000-7f445e5d7000 ---p 00000000 00:00 0 
+7f445e5d7000-7f445e6d7000 rw-p 00000000 00:00 0 
+7f445e6d7000-7f445e6d8000 ---p 00000000 00:00 0 
+7f445e6d8000-7f445e7d8000 rw-p 00000000 00:00 0 
+7f445e7d8000-7f445e7d9000 ---p 00000000 00:00 0 
+7f445e7d9000-7f445e92a000 rw-p 00000000 00:00 0 
+7f445e92a000-7f445ec99000 ---p 00000000 00:00 0 
+7f445ec99000-7f445ec9c000 r--p 00000000 103:04 662609                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libzip.so
+7f445ec9c000-7f445eca0000 r-xp 00003000 103:04 662609                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libzip.so
+7f445eca0000-7f445eca2000 r--p 00007000 103:04 662609                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libzip.so
+7f445eca2000-7f445eca3000 r--p 00008000 103:04 662609                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libzip.so
+7f445eca3000-7f445eca4000 rw-p 00009000 103:04 662609                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libzip.so
+7f445eca4000-7f445ecb1000 r--p 00000000 103:04 662588                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjava.so
+7f445ecb1000-7f445ecc7000 r-xp 0000d000 103:04 662588                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjava.so
+7f445ecc7000-7f445ecce000 r--p 00023000 103:04 662588                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjava.so
+7f445ecce000-7f445eccf000 r--p 00029000 103:04 662588                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjava.so
+7f445eccf000-7f445ecd0000 rw-p 0002a000 103:04 662588                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libjava.so
+7f445ecd0000-7f445ecd1000 rw-p 00000000 00:00 0 
+7f445ecd1000-7f445ecd4000 r--p 00000000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecd4000-7f445ecd8000 r-xp 00003000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecd8000-7f445ecd9000 r--p 00007000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecd9000-7f445ecda000 ---p 00008000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecda000-7f445ecdb000 r--p 00008000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecdb000-7f445ecdc000 rw-p 00009000 103:04 2368512                   /usr/lib/librt-2.31.so
+7f445ecdc000-7f445ecdd000 ---p 00000000 00:00 0 
+7f445ecdd000-7f445ece0000 ---p 00000000 00:00 0 
+7f445ece0000-7f445eddd000 rw-p 00000000 00:00 0 
+7f445eddd000-7f445edec000 r--p 00000000 103:04 2368476                   /usr/lib/libm-2.31.so
+7f445edec000-7f445ee88000 r-xp 0000f000 103:04 2368476                   /usr/lib/libm-2.31.so
+7f445ee88000-7f445ef21000 r--p 000ab000 103:04 2368476                   /usr/lib/libm-2.31.so
+7f445ef21000-7f445ef22000 r--p 00143000 103:04 2368476                   /usr/lib/libm-2.31.so
+7f445ef22000-7f445ef23000 rw-p 00144000 103:04 2368476                   /usr/lib/libm-2.31.so
+7f445ef23000-7f445f115000 r--p 00000000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445f115000-7f445f9c1000 r-xp 001f2000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445f9c1000-7f445fb63000 r--p 00a9e000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445fb63000-7f445fb64000 ---p 00c40000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445fb64000-7f445fbf9000 r--p 00c40000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445fbf9000-7f445fc21000 rw-p 00cd5000 103:04 662612                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/server/libjvm.so
+7f445fc21000-7f445fc54000 rw-p 00000000 00:00 0 
+7f445fc54000-7f445fc5b000 r--p 00000000 103:04 2368504                   /usr/lib/libpthread-2.31.so
+7f445fc5b000-7f445fc6b000 r-xp 00007000 103:04 2368504                   /usr/lib/libpthread-2.31.so
+7f445fc6b000-7f445fc70000 r--p 00017000 103:04 2368504                   /usr/lib/libpthread-2.31.so
+7f445fc70000-7f445fc71000 r--p 0001b000 103:04 2368504                   /usr/lib/libpthread-2.31.so
+7f445fc71000-7f445fc72000 rw-p 0001c000 103:04 2368504                   /usr/lib/libpthread-2.31.so
+7f445fc72000-7f445fc76000 rw-p 00000000 00:00 0 
+7f445fc76000-7f445fc77000 r--p 00000000 103:04 2368470                   /usr/lib/libdl-2.31.so
+7f445fc77000-7f445fc78000 r-xp 00001000 103:04 2368470                   /usr/lib/libdl-2.31.so
+7f445fc78000-7f445fc79000 r--p 00002000 103:04 2368470                   /usr/lib/libdl-2.31.so
+7f445fc79000-7f445fc7a000 r--p 00002000 103:04 2368470                   /usr/lib/libdl-2.31.so
+7f445fc7a000-7f445fc7b000 rw-p 00003000 103:04 2368470                   /usr/lib/libdl-2.31.so
+7f445fc7b000-7f445fc7e000 r--p 00000000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc7e000-7f445fc8c000 r-xp 00003000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc8c000-7f445fc92000 r--p 00011000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc92000-7f445fc93000 ---p 00017000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc93000-7f445fc94000 r--p 00017000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc94000-7f445fc95000 rw-p 00018000 103:04 2365659                   /usr/lib/libz.so.1.2.11
+7f445fc95000-7f445fcba000 r--p 00000000 103:04 2368461                   /usr/lib/libc-2.31.so
+7f445fcba000-7f445fe06000 r-xp 00025000 103:04 2368461                   /usr/lib/libc-2.31.so
+7f445fe06000-7f445fe51000 r--p 00171000 103:04 2368461                   /usr/lib/libc-2.31.so
+7f445fe51000-7f445fe54000 r--p 001bb000 103:04 2368461                   /usr/lib/libc-2.31.so
+7f445fe54000-7f445fe57000 rw-p 001be000 103:04 2368461                   /usr/lib/libc-2.31.so
+7f445fe57000-7f445fe5b000 rw-p 00000000 00:00 0 
+7f445fe5b000-7f445fe60000 r--s 0001f000 103:04 1582119                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/commons-compiler-3.1.0.jar
+7f445fe60000-7f445fe61000 r--s 00000000 103:04 1582118                   /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/animal-sniffer-annotations-1.14.jar
+7f445fe61000-7f445fe69000 rw-s 00000000 00:2e 267                        /tmp/hsperfdata_trofis/142392
+7f445fe69000-7f445fe6c000 r--p 00000000 103:04 2368497                   /usr/lib/libnss_files-2.31.so
+7f445fe6c000-7f445fe73000 r-xp 00003000 103:04 2368497                   /usr/lib/libnss_files-2.31.so
+7f445fe73000-7f445fe75000 r--p 0000a000 103:04 2368497                   /usr/lib/libnss_files-2.31.so
+7f445fe75000-7f445fe76000 r--p 0000b000 103:04 2368497                   /usr/lib/libnss_files-2.31.so
+7f445fe76000-7f445fe77000 rw-p 0000c000 103:04 2368497                   /usr/lib/libnss_files-2.31.so
+7f445fe77000-7f445fe7e000 rw-p 00000000 00:00 0 
+7f445fe7e000-7f445fe83000 r--p 00000000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe83000-7f445fe8a000 r-xp 00005000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe8a000-7f445fe8c000 r--p 0000c000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe8c000-7f445fe8d000 ---p 0000e000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe8d000-7f445fe8f000 r--p 0000e000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe8f000-7f445fe90000 rw-p 00010000 103:04 662608                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/libverify.so
+7f445fe90000-7f445fe93000 r--p 00000000 103:04 662610                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jli/libjli.so
+7f445fe93000-7f445fe9c000 r-xp 00003000 103:04 662610                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jli/libjli.so
+7f445fe9c000-7f445fe9f000 r--p 0000c000 103:04 662610                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jli/libjli.so
+7f445fe9f000-7f445fea0000 r--p 0000e000 103:04 662610                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jli/libjli.so
+7f445fea0000-7f445fea1000 rw-p 0000f000 103:04 662610                    /usr/lib/jvm/java-8-openjdk/jre/lib/amd64/jli/libjli.so
+7f445fea1000-7f445fea3000 rw-p 00000000 00:00 0 
+7f445fea3000-7f445fea5000 r--p 00000000 103:04 2368449                   /usr/lib/ld-2.31.so
+7f445fea5000-7f445fec5000 r-xp 00002000 103:04 2368449                   /usr/lib/ld-2.31.so
+7f445fec5000-7f445fecd000 r--p 00022000 103:04 2368449                   /usr/lib/ld-2.31.so
+7f445fecd000-7f445fece000 r--p 00000000 00:00 0 
+7f445fece000-7f445fecf000 r--p 0002a000 103:04 2368449                   /usr/lib/ld-2.31.so
+7f445fecf000-7f445fed0000 rw-p 0002b000 103:04 2368449                   /usr/lib/ld-2.31.so
+7f445fed0000-7f445fed1000 rw-p 00000000 00:00 0 
+7ffc5e841000-7ffc5e865000 rw-p 00000000 00:00 0                          [stack]
+7ffc5e8ae000-7ffc5e8b1000 r--p 00000000 00:00 0                          [vvar]
+7ffc5e8b1000-7ffc5e8b2000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
+
+VM Arguments:
+jvm_args: -Xms1g -Xmx1g -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -Djava.awt.headless=true -Dfile.encoding=UTF-8 -Djruby.compile.invokedynamic=true -Djruby.jit.threshold=0 -Djruby.regexp.interruptible=true -XX:+HeapDumpOnOutOfMemoryError -Djava.security.egd=file:/dev/urandom -Dlog4j2.isThreadContextMapInheritable=true 
+java_command: org.logstash.Logstash -f /home/trofis/Documents/Worldline/autoPairing/config/logstash-config.conf -w 1
+java_class_path (initial): /home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/animal-sniffer-annotations-1.14.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/commons-codec-1.13.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/commons-compiler-3.1.0.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/error_prone_annotations-2.0.18.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/google-java-format-1.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/gradle-license-report-0.7.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/guava-22.0.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/j2objc-annotations-1.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-annotations-2.9.10.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-core-2.9.10.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-databind-2.9.10.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jackson-dataformat-cbor-2.9.10.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/janino-3.1.0.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/javassist-3.26.0-GA.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jruby-complete-9.2.9.0.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/jsr305-1.3.9.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-api-2.12.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-core-2.12.1.jar:/home/trofis/Documents/Worldline/autoPairing/logstash/logstash-core/lib/jars/log4j-slf4j-impl-2.12.1.jar:/home/trof
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+PATH=/usr/lib/node_modules/npm/node_modules/npm-lifecycle/node-gyp-bin:/home/trofis/Documents/auto-pairing-app/server/node_modules/.bin:/home/trofis/.local/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/var/lib/snapd/snap/bin
+USERNAME=trofis
+SHELL=/bin/bash
+DISPLAY=:1
+
+Signal Handlers:
+SIGSEGV: [libjvm.so+0xa6a400], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGBUS: [libjvm.so+0xa6a400], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGFPE: [libjvm.so+0x8c7be0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGPIPE: [libjvm.so+0x8c7be0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGXFSZ: [libjvm.so+0x8c7be0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGILL: [libjvm.so+0x8c7be0], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGUSR1: SIG_DFL, sa_mask[0]=00000000000000000000000000000000, sa_flags=none
+SIGUSR2: [libjvm.so+0x8c7ab0], sa_mask[0]=00000000000000000000000000000000, sa_flags=SA_RESTART|SA_SIGINFO
+SIGHUP: [libjvm.so+0x8c7e80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGINT: [libjvm.so+0x8c7e80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGTERM: [libjvm.so+0x8c7e80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGQUIT: [libjvm.so+0x8c7e80], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+
+
+---------------  S Y S T E M  ---------------
+
+OS:DISTRIB_ID=ManjaroLinux
+DISTRIB_RELEASE=20.0
+DISTRIB_CODENAME=Lysia
+DISTRIB_DESCRIPTION="Manjaro Linux"
+
+uname:Linux 5.4.36-1-MANJARO #1 SMP PREEMPT Wed Apr 29 18:47:01 UTC 2020 x86_64
+libc:glibc 2.31 NPTL 2.31 
+rlimit: STACK 8192k, CORE infinity, NPROC 30891, NOFILE 524288, AS infinity
+load average:5,64 2,89 2,14
+
+/proc/meminfo:
+MemTotal:        7927548 kB
+MemFree:          731160 kB
+MemAvailable:     996564 kB
+Buffers:           24120 kB
+Cached:          1633828 kB
+SwapCached:            0 kB
+Active:          5117272 kB
+Inactive:         732588 kB
+Active(anon):    4937660 kB
+Inactive(anon):   473308 kB
+Active(file):     179612 kB
+Inactive(file):   259280 kB
+Unevictable:      738112 kB
+Mlocked:              80 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:               788 kB
+Writeback:             0 kB
+AnonPages:       4930256 kB
+Mapped:           501888 kB
+Shmem:           1260760 kB
+KReclaimable:     109524 kB
+Slab:             323096 kB
+SReclaimable:     109524 kB
+SUnreclaim:       213572 kB
+KernelStack:       19756 kB
+PageTables:        72812 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     3963772 kB
+Committed_AS:   20512112 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       42168 kB
+VmallocChunk:          0 kB
+Percpu:             5760 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      527304 kB
+DirectMap2M:     7634944 kB
+DirectMap1G:           0 kB
+
+container (cgroup) information:
+container_type: cgroupv1
+cpu_cpuset_cpus: 0-7
+cpu_memory_nodes: 0
+active_processor_count: 8
+cpu_quota: -1
+cpu_period: 100000
+cpu_shares: -1
+memory_limit_in_bytes: -1
+memory_and_swap_limit_in_bytes: -1
+memory_soft_limit_in_bytes: -1
+memory_usage_in_bytes: 6623436800
+memory_max_usage_in_bytes: 7388897280
+
+
+CPU:total 8 (initial active 8) (4 cores per cpu, 2 threads per core) family 6 model 142 stepping 12, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, 3dnowpref, lzcnt, ht, tsc, tscinvbit, bmi1, bmi2, adx
+
+/proc/cpuinfo:
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1799.999
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 1
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 2
+cpu cores	: 4
+apicid		: 4
+initial apicid	: 4
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1799.998
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 3
+cpu cores	: 4
+apicid		: 6
+initial apicid	: 6
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 4
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 0
+cpu cores	: 4
+apicid		: 1
+initial apicid	: 1
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 5
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 1
+cpu cores	: 4
+apicid		: 3
+initial apicid	: 3
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 6
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 2
+cpu cores	: 4
+apicid		: 5
+initial apicid	: 5
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 7
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 142
+model name	: Intel(R) Core(TM) i5-8265U CPU @ 1.60GHz
+stepping	: 12
+microcode	: 0xca
+cpu MHz		: 1800.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 8
+core id		: 3
+cpu cores	: 4
+apicid		: 7
+initial apicid	: 7
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 22
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb invpcid_single ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid mpx rdseed adx smap clflushopt intel_pt xsaveopt xsavec xgetbv1 xsaves dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp md_clear flush_l1d arch_capabilities
+bugs		: spectre_v1 spectre_v2 spec_store_bypass swapgs itlb_multihit
+bogomips	: 3601.00
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+
+
+Memory: 4k page, physical 7927548k(728136k free), swap 0k(0k free)
+
+vm_info: OpenJDK 64-Bit Server VM (25.242-b08) for linux-amd64 JRE (1.8.0_242-b08), built on Jan 26 2020 11:52:10 by "builduser" with gcc 9.2.0
+
+time: Fri May 15 16:36:42 2020
+timezone: CEST
+elapsed time: 9 seconds (0d 0h 0m 9s)
+
