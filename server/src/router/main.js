@@ -14,6 +14,7 @@ const router = new express.Router()
 //ANALYSE LOG FILE EVENT
 router.post('/analyseLog', async(req, res) => {
   console.log(req.files)
+  console.log(req.id)
   const file = req.files.log
   file.name = req.id
   file.mv(`${global.logs_dir}/all/${file.name}.log`)

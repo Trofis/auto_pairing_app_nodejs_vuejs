@@ -9,7 +9,8 @@ const getResult = (file_name) => {
   const cmd = `grep ${global.logs_dir}/all/${file_name} ${global.logs_dir}/result.log`
 
   const data = execSync(cmd).toString().replace('\r\n','')
-  fs.unlink(`${global.logs_dir}/all/${file_name}.log`, (err) => console.log(err))
+  // This line below can cause trouble to logstash
+  // fs.unlink(`${global.logs_dir}/all/${file_name}.log`, (err) => console.log(err))
   return (/no error|error pattern 3/g).exec(data)[0].toString()
 }
 

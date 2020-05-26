@@ -2,130 +2,76 @@
     <div class="d-flex align-center justify-center fill-height fluid">
       <div class="flex-column">
         <v-row>
-          <v-col class="fluid" md="auto"> 
-            <p class="mt-1">Single log file: </p>
-          </v-col>
-          <template>
-            <v-file-input  accept=".log" v-model="file" label="File input"></v-file-input>
-          </template>
-          <v-col class="d-flex justify-end">
-            <v-btn rounded color="primary" vdark @click="singleFile">Confirm</v-btn>
+           <v-col class="fluid" md="auto"> 
+            <h3 class="mt-1 text-center">Log file process </h3>
           </v-col>
         </v-row>
         <v-row>
-          <v-col class="fluid" md="auto"> 
-            <p class="mt-1">Multiple zip files: </p>
-          </v-col>
           <template>
-            <v-file-input multiple accept=".zip" v-model="files" label="Files input"></v-file-input>
+            <v-file-input class="mr-6" accept=".log" style="width:20em;" v-model="file" label="File input"></v-file-input>
           </template>
           <v-col class="d-flex justify-end">
-            <v-btn rounded color="primary" vdark @click="multipleFiles">Confirm</v-btn>
+            <v-btn rounded color="success" vdark @click="singleFile">Confirm</v-btn>
+          </v-col>
+        </v-row>
+        <v-row class="mt-5">
+          <v-col class="fluid" md="auto"> 
+            <h3 class="mt-1 text-center">Zip files process</h3>
+          </v-col>
+        </v-row>
+        <v-row class="mt-1">
+          <template>
+            <v-file-input class="mr-6" multiple accept=".zip" style="width:20em;" v-model="files" label="Files input"></v-file-input>
+          </template>
+          <v-col class="d-flex justify-end">
+            <v-btn rounded color="success" vdark @click="multipleFiles">Confirm</v-btn>
           </v-col>
         </v-row>
       </div>
-
-
-      <v-bottom-sheet v-model="sheet" persistent>
-        <v-sheet v-if="action == 'multipleFiles'" class="text-center" height="50%" >
-          <div class ="text-center">
-            <v-btn rounded class="mt-3" color="error" @click="sheet = !sheet" dark>Close</v-btn>
-          </div>
-           
-           <transition
-              xenter-active-class="animated bounce" 
-              leave-active-class="animated shake" 
-              appear
-           >
-              <v-chip v-if="files.length == results.length" dark style="border-radius:100px;" class="pa-3 ma-2 green darken-2 text-center white--text"> {{message}}</v-chip>
-              <v-alert v-else-if="message.length > 0 && files.length != results.length" type="warning" dark style="border-radius:100px;">
-                In progress, please wait ...
-              </v-alert>
-              <v-alert v-else type="warning" dark style="border-radius:100px;">
-                In progress, please wait ...
-              </v-alert>
-           </transition>
-            <v-data-table
-              :headers="headers"
-              :items="results"
-              :items-per-page="5"
-              class="elevation-1"
-            >
-              
-                <template v-slot:item.result='{item}'>
-                  <v-skeleton-loader
-                    :loading="results[results.indexOf(item)].result == null"
-                    class='d-flex align-center'
-                    height="100%"
-                    type="text"
-                  >
-                    <v-chip dark> {{item.result}}</v-chip>
-                  </v-skeleton-loader>
-
-                </template>
-            </v-data-table>
-        </v-sheet>
-
-        <v-sheet v-else class="text-center" height="200px" >
-            <div class ="text-center ">
-              <v-btn rounded class="mt-3" color="error" :disabled="message.length > 0" @click="sheet = !sheet" dark>Close</v-btn>
-            </div>
-            <transition
-              enter-active-class="animated bounce" 
-              leave-active-class="animated shake" 
-              appear
-            >
-              <div class="py-3" v-if="message.length > 0">{{message}}</div>
-              <v-progress-circular
-                indeterminate
-                color="green"
-                v-else
-              ></v-progress-circular>
-            </transition>
-        </v-sheet>
-    </v-bottom-sheet>
+      <app-pop-up :file="file" :files="files" :results="results"  :action="action" :message="message" :error="error" :sheet="sheet" :close="close"> </app-pop-up>
     </div>
-    
-  
-    
 </template>
 
 <script>
   const axios = require('axios')
+  import {eventBus} from '../main'
+  import PopUp from './PopUp.vue'
   
 export default {
   name: 'Home',
+  components:{
+    appPopUp : PopUp 
+  },
   data: () => ({
-    headers : [
-      { text : 'Files', align:"start", sortable:false, value:'file'},
-      { text : 'Result', value:'result'},
-    ],
+    
     file: {},
     files: [],
     results: [],
     message : '',
     action:'',
     sheet:false,
-    worker: null
+    error:''
   }),
-  watch:{
-    results(){
-      if (this.results.length == this.files.length)
-        this.message = "Process done with success"
-      this.files = []
-    }
-  },
+  
   methods: {
     multipleFiles(){
+      if (this.files.length == 0){
+        alert("You should select a file")
+        return
+      }
       this.files.forEach((file) => {
-        console.log(this.results)
         this.results.push({file:file.name,result:null})
         this.analyseLogZip(file)
       })
       this.sheet = true
+      this.message = ''
       this.action = 'multipleFiles'
     },
     singleFile(){
+      if (this.file == undefined){
+        alert("You should select a file")
+        return
+      }
       this.sheet = true
       this.action = 'singleFile'
       const formData = new FormData();
@@ -135,25 +81,43 @@ export default {
           this.message = response.data
         })
         .catch(error => {
+          if (error.message === 'Network Error')
+              this.error = 'Unable to communicate with the server, please contact the admin'
+          else
+            this.error = "An error occured"
           console.log(error)
         })
-    },
-    async analyseLogZip(file){
-      const formData = new FormData();
-      formData.append("log", file)
+      },
+      close(){
+        this.sheet = false
+        this.message=''
+        this.file = {}
+        this.files = []
+        this.results = []
+        this.error = ''
+      },
+      async analyseLogZip(file){
+        const formData = new FormData()
+        formData.append("log", file)
 
-      axios.post("http://127.0.0.1:3000/analyseLogZip", formData)
-        .then(response => {
-          console.log(response)
-          this.results.forEach(result => {if (result.file == response.data.file) result.result = response.data.result; return;})
-          console.log(this.results)
-        })
-        .catch(error => {
-          this.message = 'Unable to communicate with the server, please contact the administrator'
-          console.log(error)
-        })
+        axios.post("http://127.0.0.1:3000/analyseLogZip", formData)
+          .then(response => {
+            this.results.forEach(result => {if (result.file == response.data.file) result.result = response.data.result})
+            eventBus.addResult(response.data)
+
+          })
+          .catch(error => {
+            console.log(error.message )
+            if (error.message === 'Network Error')
+              this.error = 'Unable to communicate with the server, please contact the admin'
+            else if (error.response.status === 400)
+              this.error = "One of the files specified does not contain a ModemD log file, please correct this before to retry"
+            else
+              this.error = "An error occured"
+          })
+      }
     }
+    
   }
   
-};
 </script>
