@@ -69,7 +69,7 @@
                 appear
             >
                 <div v-if="message.length > 0 || error.length > 0" key="result">
-                    <v-btn rounded class="mt-3 mb-1" color="error" :disabled="message.length == 0" @click="isOver=false;close()" dark>Close</v-btn>
+                    <v-btn rounded class="mt-3 mb-1" color="error" @click="isOver=false;close()" dark>Close</v-btn>
                    
                     <div v-if="error === '' || error === none" class="py-3" >
                         {{message}}
