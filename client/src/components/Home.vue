@@ -72,11 +72,14 @@ export default {
         alert("You should select a file")
         return
       }
+      console.log(process.env.BACK)
+      console.log(process.env.NODE_ENV)
+      
       this.sheet = true
       this.action = 'singleFile'
       const formData = new FormData();
       formData.append("log", this.file)
-      axios.post("http://127.0.0.1:3000/analyseLog", formData)
+      axios.post(`10.43.252.22:3000/analyseLog`, formData)
         .then(response => {
           this.message = response.data
         })
@@ -100,7 +103,7 @@ export default {
         const formData = new FormData()
         formData.append("log", file)
 
-        axios.post("http://127.0.0.1:3000/analyseLogZip", formData)
+        axios.post(`10.43.252.22:3000/analyseLogZip`, formData)
           .then(response => {
             this.results.forEach(result => {if (result.file == response.data.file) result.result = response.data.result})
             eventBus.addResult(response.data)
