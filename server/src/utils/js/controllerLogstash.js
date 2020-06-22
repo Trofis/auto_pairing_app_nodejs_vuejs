@@ -1,13 +1,26 @@
+/** Logstash controller
+ * @module utils/js/controllerLogstash
+ * @requires locations,global_vars,exec,execSync,spawn
+ */
+
+// Intern imports
 const global = require('../../modules/global_vars')
 const loc = require('../../modules/locations')
+
+// Global imports
 const {exec, spawn, execSync} = require('child_process')
 
-function controller_logstash(){
-    const isExecuted = execSync(global.isExecutedCmd).toString().match(/False/g) != null ? false : true
-    console.log(isExecuted)
-    console.log(global.logstash_dir)
-    console.log(global.config_logstash_name)
 
+/**
+ * It aims to start & manage logstash thread
+ * @name controller_logstash
+ * @function
+ * @memberof module:utils/js/controllerLogstash
+ * @inner
+ */
+function controller_logstash(){
+    const isExecutedCmd = 'python3 '+loc.environment+' 1 127.0.0.1 9600'
+    const isExecuted = execSync(isExecutedCmd).toString().match(/False/g) != null ? false : true
 
     // Is logstash is runned from outside
     if (!isExecuted){

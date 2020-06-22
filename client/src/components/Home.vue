@@ -37,6 +37,15 @@
   import {eventBus} from '../main'
   import PopUp from './PopUp.vue'
   
+/**
+ * @vue-data {Object} [file ={}] - singleFile's object
+ * @vue-data {Array} [files =[]] - multipleFiles' array
+ * @vue-data {Array} [results =[]] - multipleFiles' analyse results
+ * @vue-data {string} [message =''] - keep infos or single result
+ * @vue-data {string} [action =''] - keep which action the user performed : singleFile or multipleFiles
+ * @vue-data {boolean} [sheet =false]- show or not the popUp
+ * @vue-data {string} [error =''] -  error message
+*/ 
 export default {
   name: 'Home',
   components:{
@@ -54,19 +63,35 @@ export default {
   }),
   
   methods: {
+    /**
+     * MultipleFile process which will through an async method send the files
+     */
     multipleFiles(){
+      // Check if any file's been selected
+      // If not we send back an alert
       if (this.files.length == 0){
         alert("You should select a file")
         return
       }
+
+      // Init for each file a result item (files's name,file's result)
+      // Call the method analyseLogZip to send asynchronously the file
       this.files.forEach((file) => {
         this.results.push({file:file.name,result:null})
         this.analyseLogZip(file)
       })
+
+      // Set sheet to true to display the popUp component
       this.sheet = true
+      // Set to '' message 
       this.message = ''
+      // Set to 'multipleFiles' action for the appropriate popup's display
       this.action = 'multipleFiles'
     },
+    /**
+     * Single file process which will simply send a request to the back with the file
+     * And then wait for the file's result response
+     */
     singleFile(){
       if (this.file == undefined){
         alert("You should select a file")
@@ -91,6 +116,9 @@ export default {
           console.log(error)
         })
       },
+      /**
+       * Close process which initialize all basic properties
+       */
       close(){
         this.sheet = false
         this.message=''
@@ -99,6 +127,11 @@ export default {
         this.results = []
         this.error = ''
       },
+      /**
+       * It aims to send the file from parameter to the back and wait for its answer 
+       * @param {file} file - file to be send to the back
+       * @async
+       */
       async analyseLogZip(file){
         const formData = new FormData()
         formData.append("log", file)

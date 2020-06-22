@@ -103,7 +103,23 @@
 <script>
   import {eventBus} from '../main'
 
+/**
+ * @vue-prop {Object} file - singleFile's object
+ * @vue-prop {Array} files - multipleFiles' array
+ * @vue-prop {Array} results - multipleFiles' analyse results
+ * @vue-prop {string} [message=''] - keep infos or single result
+ * @vue-prop {string} action - keep which action the user performed : singleFile or multipleFiles
+ * @vue-prop {boolean}  [sheet=true] - show or not the popUp
+ * @vue-prop {Function} close - Popup's close process
+ * @vue-prop {string} [error=''] - error message
+ * @vue-data {Array}  [headers=[{text: 'Files', align:'start', sortable:false, value:'file'}, {text: 'Result', value:'result'}]] - Data table's header
+ * @vue-data {boolean} [isOver=false] - True or False if the file(s) treatment is over
+*/ 
 export default {
+    /**
+         * Called when PopUp is displayed
+         * It aims to refresh the data table results and then called the method 'checkResults'
+         */
     created(){
         eventBus.$on('resultsWasEdited', (data) => {
             this.results.forEach(result => {if (result.file == data.file) result.result = data.result})
@@ -119,6 +135,10 @@ export default {
     }), 
     props: ['file', 'files', 'results', 'action', 'message', 'sheet', 'close', 'error'],
     methods: {
+        /**
+         * It is triggered by an event bus called 'resultsWasEdited'
+         * It aims to display a csv button to download the results after all files has been analysed 
+         */
         checkResults(){
             this.isOver = true
             this.results.forEach((file) =>{ if (file.result == null) {this.isOver = false;}})

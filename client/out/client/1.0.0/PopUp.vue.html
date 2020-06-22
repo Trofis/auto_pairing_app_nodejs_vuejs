@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: PopUp.vue</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: PopUp.vue</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>&lt;template>
+     &lt;v-bottom-sheet v-model="sheet" persistent>
+        &lt;v-sheet v-if="action == 'multipleFiles'" class="text-center"  >
+        &lt;div v-if="error !== '' &amp;&amp; error !== null"  >
+                &lt;v-btn rounded class="mt-3 mb-3" color="error" @click="close(); isOver=false" dark>Close&lt;/v-btn>
+                &lt;div class="d-flex justify-center " >
+                
+                    &lt;v-alert  type="error" dark class="mt-3" style="border-radius:100px;width:50%;marge-left:auto;marge-right:auto;">
+                        {{error}}
+                    &lt;/v-alert>
+                &lt;/div>
+        &lt;/div>
+        &lt;div v-else>
+            &lt;transition
+                enter-active-class="animate__animated animate__backInLeft" 
+                leave-active-class="animate__animated animate__backOutRight" 
+                appear
+            >
+                &lt;div v-if="isOver" key="result">
+                    &lt;div class="d-flex justify-center " >
+                        &lt;v-btn rounded class="mt-3 mb-3" color="error" @click="close(); isOver=false" dark>Close&lt;/v-btn>
+                    &lt;/div>
+                    &lt;div class="d-flex justify-center " >
+                        &lt;v-btn color="primary" rounded >
+                            &lt;download-csv
+                                :data   = "results"
+                                >
+                                &lt;v-icon dark>mdi-cloud-download&lt;/v-icon>
+                                {{this.message}}
+                            &lt;/download-csv>
+                        &lt;/v-btn>
+                    &lt;/div>
+
+                &lt;/div>
+                &lt;div v-else class="d-flex justify-center " key="in progress">
+                    &lt;v-alert  type="warning" dark class="mt-3" style="border-radius:100px;width:50%;marge-left:auto;marge-right:auto;">
+                        In progress, please wait ...
+                    &lt;/v-alert>
+                &lt;/div>
+            &lt;/transition>
+
+            &lt;v-data-table
+              :headers="headers"
+              :items="results"
+              :items-per-page="5"
+              class="elevation-1"
+            >
+              
+                &lt;template v-slot:item.result='{item}'>
+                  &lt;v-skeleton-loader
+                    :loading="results[results.indexOf(item)].result == null"
+                    class='d-flex align-center'
+                    height="100%"
+                    type="text"
+                  >
+                    &lt;v-chip dark> {{item.result}}&lt;/v-chip>
+                  &lt;/v-skeleton-loader>
+
+                &lt;/template>
+            &lt;/v-data-table>
+        &lt;/div>
+        &lt;/v-sheet>
+
+        &lt;v-sheet v-else class="text-center" height="200px" >
+            
+            &lt;transition
+                enter-active-class="animate__animated animate__backInLeft" 
+                leave-active-class="animate__animated animate__backOutRight" 
+                appear
+            >
+                &lt;div v-if="message.length > 0 || error.length > 0" key="result">
+                    &lt;v-btn rounded class="mt-3 mb-1" color="error" @click="isOver=false;close()" dark>Close&lt;/v-btn>
+                   
+                    &lt;div v-if="error === '' || error === none" class="py-3" >
+                        {{message}}
+                    &lt;/div>
+                    &lt;div class="d-flex justify-center " v-else>
+                         &lt;v-alert  type="error" dark class="mt-3" style="border-radius:100px;width:50%;marge-left:auto;marge-right:auto;">
+                            {{error}}
+                        &lt;/v-alert>
+                    &lt;/div>
+                   
+
+                &lt;/div>
+                &lt;div v-else key="in progress">
+                    &lt;div class="d-flex justify-center " >
+                        &lt;v-alert  type="warning" dark class="mt-3" style="border-radius:100px;width:50%;marge-left:auto;marge-right:auto;">
+                            In progress, please wait ...
+                        &lt;/v-alert>
+
+                    &lt;/div>
+                    &lt;v-progress-circular
+                        indeterminate
+                        color="green"
+                        class="mt-6"
+                    >&lt;/v-progress-circular>
+                &lt;/div>
+            &lt;/transition>
+        &lt;/v-sheet>
+    &lt;/v-bottom-sheet>
+&lt;/template>
+
+&lt;script>
+  import {eventBus} from '../main'
+
+/**
+ * @vue-prop {Object} file - singleFile's object
+ * @vue-prop {Array} files - multipleFiles' array
+ * @vue-prop {Array} results - multipleFiles' analyse results
+ * @vue-prop {string} [message=''] - keep infos or single result
+ * @vue-prop {string} action - keep which action the user performed : singleFile or multipleFiles
+ * @vue-prop {boolean}  [sheet=true] - show or not the popUp
+ * @vue-prop {Function} close - Popup's close process
+ * @vue-prop {string} [error=''] - error message
+ * @vue-data {Array}  [headers=[{text: 'Files', align:'start', sortable:false, value:'file'}, {text: 'Result', value:'result'}]] - Data table's header
+ * @vue-data {boolean} [isOver=false] - True or False if the file(s) treatment is over
+*/ 
+export default {
+    /**
+         * Called when PopUp is displayed
+         * It aims to refresh the data table results and then called the method 'checkResults'
+         */
+    created(){
+        eventBus.$on('resultsWasEdited', (data) => {
+            this.results.forEach(result => {if (result.file == data.file) result.result = data.result})
+            this.checkResults()
+        })
+    },
+    data: () => ({
+        headers : [
+            { text : 'Files', align:"start", sortable:false, value:'file'},
+            { text : 'Result', value:'result'},
+        ],
+        isOver : false
+    }), 
+    props: ['file', 'files', 'results', 'action', 'message', 'sheet', 'close', 'error'],
+    methods: {
+        /**
+         * It is triggered by an event bus called 'resultsWasEdited'
+         * It aims to display a csv button to download the results after all files has been analysed 
+         */
+        checkResults(){
+            this.isOver = true
+            this.results.forEach((file) =>{ if (file.result == null) {this.isOver = false;}})
+            if (this.isOver)
+                this.message = "Click to download the attached csv file"
+        }   
+    },
+    
+}
+&lt;/script></code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Home.html">Home</a></li><li><a href="module-PopUp.html">PopUp</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.4</a> on Mon Jun 22 2020 10:19:07 GMT+0200 (Central European Summer Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
