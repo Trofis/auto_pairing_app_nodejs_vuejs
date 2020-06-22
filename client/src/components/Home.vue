@@ -97,16 +97,21 @@ export default {
         alert("You should select a file")
         return
       }
-      console.log(process.env.BACK)
+      console.log(process.env.VUE_APP_BACK_ADDRESS)
+      console.log(process.env.VUE_APP_BACK_PORT)
       console.log(process.env.NODE_ENV)
-      
+      console.log(`${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/analyseLog`)
       this.sheet = true
       this.action = 'singleFile'
       const formData = new FormData();
       formData.append("log", this.file)
-      axios.post(`10.43.252.22:3000/analyseLog`, formData)
+      axios.post(`${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/analyseLog`, formData)
         .then(response => {
-          this.message = response.data
+          if (response.data.length > 20)
+            this.error = 'Unable to communicate with the server, please contact the admin'
+          else
+            this.message = response.data
+
         })
         .catch(error => {
           if (error.message === 'Network Error')
@@ -136,10 +141,15 @@ export default {
         const formData = new FormData()
         formData.append("log", file)
 
-        axios.post(`10.43.252.22:3000/analyseLogZip`, formData)
+        axios.post(`${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/analyseLogZip`, formData)
           .then(response => {
-            this.results.forEach(result => {if (result.file == response.data.file) result.result = response.data.result})
-            eventBus.addResult(response.data)
+            if (response.data.result.length > 20)
+              this.error = 'Unable to communicate with the server, please contact the admin'
+            else{
+              this.results.forEach(result => {if (result.file == response.data.file) result.result = response.data.result})
+              eventBus.addResult(response.data)
+
+            }
 
           })
           .catch(error => {
