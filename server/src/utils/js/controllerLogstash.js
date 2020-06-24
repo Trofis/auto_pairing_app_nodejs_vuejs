@@ -24,7 +24,7 @@ function controller_logstash(){
 
     // Is logstash is runned from outside
     if (!isExecuted){
-        const child = spawn('sh', [global.logstash_dir+"/logstash/bin/logstash", "-f", loc.__auto_pairing_app+"/configLogstash/"+global.config_logstash_name, "-w", 1])
+        const child = spawn('sh', [global.logstash_dir+"/bin/logstash", "-f", loc.__auto_pairing_app+"/configLogstash/"+global.config_logstash_name, "-w", 1])
 
         child.stdout.on('data', (data) => {
             console.log(data.toString())
