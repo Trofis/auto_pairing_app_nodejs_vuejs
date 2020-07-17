@@ -41,7 +41,7 @@ function controller_logstash(){
     }
 
 
-    exec('python '+loc.environment+' 2')
+    exec('python3 '+loc.environment+' 2')
 
     
   }

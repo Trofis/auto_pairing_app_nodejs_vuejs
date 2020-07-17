@@ -105,7 +105,9 @@ export default {
       this.action = 'singleFile'
       const formData = new FormData();
       formData.append("log", this.file)
-      axios.post(`${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/analyseLog`, formData)
+      axios.defaults.baseURL = process.env.VUE_APP_BACK_ADDRESS;
+      axios.defaults.port = process.env.VUE_APP_BACK_PORT;
+      axios.post(`analyseLog`, formData)
         .then(response => {
           if (response.data.length > 20)
             this.error = 'Unable to communicate with the server, please contact the admin'
@@ -122,7 +124,7 @@ export default {
         })
       },
       /**
-       * Close process which initialize all basic properties
+       * Close process whic00toh initialize all basic properties
        */
       close(){
         this.sheet = false
@@ -140,8 +142,9 @@ export default {
       async analyseLogZip(file){
         const formData = new FormData()
         formData.append("log", file)
-
-        axios.post(`${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/analyseLogZip`, formData)
+        axios.defaults.baseURL = process.env.VUE_APP_BACK_ADDRESS;
+        axios.defaults.port = process.env.VUE_APP_BACK_PORT;
+        axios.post(`analyseLogZip`, formData)
           .then(response => {
             if (response.data.result.length > 20)
               this.error = 'Unable to communicate with the server, please contact the admin'
