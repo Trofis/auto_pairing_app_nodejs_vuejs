@@ -1,0 +1,6 @@
+First, be sure to have a correct version of NodeJS & VueJS on the server (In use : 12.17 & 4.3.1)
+
+
+In order to launch properly the web app, please follow the steps below :
+    - First go to "server" and write the following command : npm run serve
+    - Next go to "client" and write in your terminal : serve -s dist

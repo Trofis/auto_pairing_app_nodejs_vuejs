@@ -33,9 +33,15 @@
 </template>
 
 <script>
-  const axios = require('axios')
   import {eventBus} from '../main'
   import PopUp from './PopUp.vue'
+  
+  const axios = require('axios')
+  
+  const instance = axios.create({
+    baseURL:`http://${process.env.VUE_APP_BACK_ADDRESS}:${process.env.VUE_APP_BACK_PORT}/`
+  })
+  
   
 /**
  * @vue-data {Object} [file ={}] - singleFile's object
@@ -105,9 +111,7 @@ export default {
       this.action = 'singleFile'
       const formData = new FormData();
       formData.append("log", this.file)
-      axios.defaults.baseURL = process.env.VUE_APP_BACK_ADDRESS;
-      axios.defaults.port = process.env.VUE_APP_BACK_PORT;
-      axios.post(`analyseLog`, formData)
+      instance.post(`analyseLog`, formData)
         .then(response => {
           if (response.data.length > 20)
             this.error = 'Unable to communicate with the server, please contact the admin'
@@ -142,9 +146,7 @@ export default {
       async analyseLogZip(file){
         const formData = new FormData()
         formData.append("log", file)
-        axios.defaults.baseURL = process.env.VUE_APP_BACK_ADDRESS;
-        axios.defaults.port = process.env.VUE_APP_BACK_PORT;
-        axios.post(`analyseLogZip`, formData)
+        instance.post(`analyseLogZip`, formData)
           .then(response => {
             if (response.data.result.length > 20)
               this.error = 'Unable to communicate with the server, please contact the admin'
